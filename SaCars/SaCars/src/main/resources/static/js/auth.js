@@ -1,5 +1,4 @@
 const API_URL = 'http://localhost:8082/api';
-console.log("AUTH.JS CARGADO");
 $(document).ready(function() {
     // Cambiar entre pestañas
     $('.tab-button').click(function() {
@@ -30,7 +29,7 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify({
                 email: email,
-                password: password
+                contrasena: password
             }),
             success: function(response) {
                 if (response.success) {
@@ -63,6 +62,7 @@ $(document).ready(function() {
         e.preventDefault();
         
         const nombre = $('#registro-nombre').val();
+        const apellido = $('#registro-apellido').val();
         const email = $('#registro-email').val();
         const telefono = $('#registro-telefono').val();
         const password = $('#registro-password').val();
@@ -89,6 +89,7 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify({
                 nombre: nombre,
+                apellido: apellido,  
                 email: email,
                 telefono: telefono,
                 password: password

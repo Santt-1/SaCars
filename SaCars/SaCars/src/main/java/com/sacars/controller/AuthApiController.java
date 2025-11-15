@@ -64,9 +64,10 @@ public class AuthApiController {
     public ResponseEntity<?> registro(@RequestBody Map<String, String> body) {
 
         String nombre = body.get("nombre");
+        String apellido = body.get("apellido"); 
         String email = body.get("email");
         String telefono = body.get("telefono");
-        String password = body.get("password");
+         String password = body.get("password");
 
         if (usuarioService.existePorEmail(email)) {
             return ResponseEntity.badRequest().body(Map.of(
@@ -77,9 +78,10 @@ public class AuthApiController {
 
         UsuarioRegistroDTO dto = new UsuarioRegistroDTO();
         dto.setNombre(nombre);
+        dto.setApellido(apellido); 
         dto.setEmail(email);
         dto.setTelefono(telefono);
-        dto.setContrasena(password);
+         dto.setContrasena(password);
 
         Usuario nuevo = usuarioService.guardar(dto);
 

@@ -39,10 +39,20 @@ public class UsuarioService {
     
     @Transactional
     public Usuario guardar(UsuarioRegistroDTO registroDTO) {
-        Usuario usuario = registroDTO.toUsuario();
+
+        Usuario usuario = new Usuario();
+        usuario.setNombre(registroDTO.getNombre());
+        usuario.setApellido(registroDTO.getApellido());
+        usuario.setEmail(registroDTO.getEmail());
+        usuario.setTelefono(registroDTO.getTelefono());
+        usuario.setDireccion(registroDTO.getDireccion());
+
+        // Encriptar contraseña
+        usuario.setContrasena(passwordEncoder.encode(registroDTO.getContrasena()));
+
         usuario.setActivo(true);
-        // Por defecto, establece el rol como CLIENTE
         usuario.setRol(Usuario.RolUsuario.CLIENTE);
+
         return usuarioRepository.save(usuario);
     }
 
