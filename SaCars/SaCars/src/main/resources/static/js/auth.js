@@ -1,4 +1,5 @@
 const API_URL = 'http://localhost:8082/api';
+console.log("AUTH.JS CARGADO");
 $(document).ready(function() {
     // Cambiar entre pestañas
     $('.tab-button').click(function() {
