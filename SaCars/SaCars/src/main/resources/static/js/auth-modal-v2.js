@@ -36,7 +36,7 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success) {
                     alert("Bienvenido " + response.data.usuario.nombre);
-                    window.location.href = "/index";
+                    window.location.href = "/catalogo";
                 } else {
                     $("#login-error").text(response.message);
                 }

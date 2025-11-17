@@ -27,11 +27,12 @@ public class Usuario {
     private String direccion;
     
     @Enumerated(EnumType.STRING)
-    private RolUsuario rol = RolUsuario.CLIENTE;
+    private RolUsuario rol = RolUsuario.cliente;
     
     private boolean activo = true;
     
     public enum RolUsuario {
-        CLIENTE, ADMINISTRADOR
+        cliente,       // ← minúscula
+        administrador  // ← minúscula
     }
 }

@@ -17,6 +17,9 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired  // ✅ MOVER ARRIBA del método que lo usa
+    private PasswordEncoder passwordEncoder;
+
     @Transactional(readOnly = true)
     public List<Usuario> listarUsuarios() {
         return usuarioRepository.findAll();
@@ -39,7 +42,6 @@ public class UsuarioService {
     
     @Transactional
     public Usuario guardar(UsuarioRegistroDTO registroDTO) {
-
         Usuario usuario = new Usuario();
         usuario.setNombre(registroDTO.getNombre());
         usuario.setApellido(registroDTO.getApellido());
@@ -47,11 +49,11 @@ public class UsuarioService {
         usuario.setTelefono(registroDTO.getTelefono());
         usuario.setDireccion(registroDTO.getDireccion() != null ? registroDTO.getDireccion() : "");
         
-        // Encriptar contraseña
+        // ✅ Ahora passwordEncoder NO será null
         usuario.setContrasena(passwordEncoder.encode(registroDTO.getContrasena()));
 
         usuario.setActivo(true);
-        usuario.setRol(Usuario.RolUsuario.CLIENTE);
+        usuario.setRol(Usuario.RolUsuario.cliente);
 
         return usuarioRepository.save(usuario);
     }
@@ -65,11 +67,8 @@ public class UsuarioService {
     public boolean existePorEmail(String email) {
         return usuarioRepository.existsByEmail(email);
     }
-     @Autowired
-    private PasswordEncoder passwordEncoder;
 
     public boolean passwordCoincide(String raw, String encoded) {
         return passwordEncoder.matches(raw, encoded);
     }
-
 }
