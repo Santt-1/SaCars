@@ -11,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -29,20 +28,12 @@ public class AuthApiController {
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
 
         String email = body.get("email");
-        String password = body.get("password"); // viene del frontend
+        String password = body.get("password");
 
-        Optional<Usuario> optUser = usuarioService.buscarPorEmail(email);
+        // ⬇ Ahora buscarPorEmail() devuelve Usuario directamente
+        Usuario usuario = usuarioService.buscarPorEmail(email);
 
-        if (optUser.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of(
-                    "success", false,
-                    "message", "Usuario no encontrado"
-            ));
-        }
-
-        Usuario usuario = optUser.get();
-
-        // VALIDACIÓN REAL DE BCRYPT
+        // Validar contraseña encriptada
         if (!passwordEncoder.matches(password, usuario.getContrasena())) {
             return ResponseEntity.badRequest().body(Map.of(
                     "success", false,
@@ -50,10 +41,10 @@ public class AuthApiController {
             ));
         }
 
-        // RESPUESTA DE LOGIN OK
+        // Respuesta login OK
         Map<String, Object> data = new HashMap<>();
         data.put("usuario", usuario);
-        data.put("token", "token-demo");
+        data.put("token", "token-demo"); // luego lo reemplazamos por JWT real
 
         return ResponseEntity.ok(Map.of(
                 "success", true,
@@ -67,9 +58,10 @@ public class AuthApiController {
 
         String nombre = body.get("nombre");
         String apellido = body.get("apellido");
+        String dni = body.get("dni");  // ⬅ AGREGADO
         String email = body.get("email");
         String telefono = body.get("telefono");
-        String password = body.get("password"); // viene del frontend
+        String password = body.get("password");
 
         if (usuarioService.existePorEmail(email)) {
             return ResponseEntity.badRequest().body(Map.of(
@@ -81,9 +73,10 @@ public class AuthApiController {
         UsuarioRegistroDTO dto = new UsuarioRegistroDTO();
         dto.setNombre(nombre);
         dto.setApellido(apellido);
+        dto.setDni(dni);              // ⬅ AGREGADO
         dto.setEmail(email);
         dto.setTelefono(telefono);
-        dto.setContrasena(password); // se encripta en el service
+        dto.setContrasena(password);
 
         Usuario nuevo = usuarioService.guardar(dto);
 

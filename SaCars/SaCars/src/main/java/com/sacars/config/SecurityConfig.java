@@ -27,6 +27,7 @@ public class SecurityConfig {
                                  "/css/**", "/js/**", "/img/**", "/webjars/**").permitAll()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/checkout/**").permitAll()
                 .requestMatchers("/api/cliente/**").authenticated()
                 .requestMatchers("/api/compras/**").authenticated()
                 .requestMatchers("/api/carrito/**").authenticated()

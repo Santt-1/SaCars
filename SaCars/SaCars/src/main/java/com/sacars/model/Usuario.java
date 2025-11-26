@@ -22,6 +22,9 @@ public class Usuario {
     
     @Column(nullable = false)
     private String contrasena;
+
+    @Column(name = "dni", nullable = false, length = 8)
+    private String dni;
     
     private String telefono;
     private String direccion;

@@ -31,8 +31,9 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Usuario> buscarPorEmail(String email) {
-        return usuarioRepository.findByEmail(email);
+    public Usuario buscarPorEmail(String email) {
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
     @Transactional
@@ -45,6 +46,7 @@ public class UsuarioService {
         Usuario usuario = new Usuario();
         usuario.setNombre(registroDTO.getNombre());
         usuario.setApellido(registroDTO.getApellido());
+        usuario.setDni(registroDTO.getDni());
         usuario.setEmail(registroDTO.getEmail());
         usuario.setTelefono(registroDTO.getTelefono());
         usuario.setDireccion(registroDTO.getDireccion() != null ? registroDTO.getDireccion() : "");

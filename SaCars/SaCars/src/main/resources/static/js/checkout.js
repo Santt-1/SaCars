@@ -1,33 +1,26 @@
 $(document).ready(function() {
-    
-    // Cargar datos del carrito y zona de envío
+
     function cargarDatosCheckout() {
         const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
         const zonaEnvio = localStorage.getItem("zonaEnvio") || "No definida";
         const costoEnvio = parseFloat(localStorage.getItem("costoEnvio")) || 0;
-        
-        // Si no hay productos, redirigir al carrito
+
         if (carrito.length === 0) {
             alert("No tienes productos en tu carrito");
             window.location.href = "carrito.html";
             return;
         }
-        
-        // Mostrar productos
+
         mostrarProductosCheckout(carrito);
-        
-        // Mostrar totales
         mostrarTotalesCheckout(carrito, costoEnvio, zonaEnvio);
-        
-        // Llenar zona de entrega
+
         $("#zona-entrega").val(zonaEnvio + (costoEnvio > 0 ? ` - S/ ${costoEnvio.toFixed(2)}` : ""));
     }
-    
-    // Mostrar productos en el checkout
+
     function mostrarProductosCheckout(carrito) {
         const contenedor = $("#checkout-productos");
         contenedor.empty();
-        
+
         carrito.forEach(producto => {
             const item = `
                 <div class="checkout-producto-item">
@@ -41,126 +34,168 @@ $(document).ready(function() {
             contenedor.append(item);
         });
     }
-    
-    // Mostrar totales
+
     function mostrarTotalesCheckout(carrito, costoEnvio, zonaEnvio) {
         const subtotal = carrito.reduce((total, producto) => total + producto.precio, 0);
         const total = subtotal + costoEnvio;
-        
+
         $("#checkout-subtotal").text(`S/ ${subtotal.toFixed(2)}`);
-        
+
         if (costoEnvio > 0) {
             $("#checkout-envio").text(`${zonaEnvio}: S/ ${costoEnvio.toFixed(2)}`);
         } else {
             $("#checkout-envio").text("Por coordinar");
         }
-        
+
         $("#checkout-total").text(`S/ ${total.toFixed(2)}`);
     }
-    
-    // Manejar envío del formulario
-    $("#form-checkout").on("submit", function(e) {
+
+    // -------------------------------------------------------------
+    // 🚀 FORMULARIO DE CHECKOUT CON INTEGRACIÓN BACKEND + FACTURA
+    // -------------------------------------------------------------
+    $("#form-checkout").on("submit", async function(e) {
         e.preventDefault();
-        
+
         const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
         const zonaEnvio = localStorage.getItem("zonaEnvio") || "No definida";
         const costoEnvio = parseFloat(localStorage.getItem("costoEnvio")) || 0;
-        
-        // Obtener datos del formulario
+
         const nombre = $("#nombre").val().trim();
         const telefono = $("#telefono").val().trim();
         const email = $("#email").val().trim();
         const direccion = $("#direccion").val().trim();
         const comentarios = $("#comentarios").val().trim();
-        
-        // Validar campos requeridos
+
         if (!nombre || !telefono || !direccion) {
             alert("Por favor completa todos los campos obligatorios (*)");
             return;
         }
-        
-        // Calcular totales
-        const subtotal = carrito.reduce((total, producto) => total + producto.precio, 0);
-        const total = subtotal + costoEnvio;
-        
-        // Crear mensaje para WhatsApp
-        let mensaje = `🛒 *NUEVO PEDIDO - SACARS*\n\n`;
+
+        // Obtener usuario logueado
+        const usuario = JSON.parse(localStorage.getItem("usuario"));
+        if (!usuario) {
+            alert("Debes iniciar sesión para realizar una compra.");
+            window.location.href = "/auth/login";
+            return;
+        }
+
+        // Crear el JSON que espera tu backend
+        const checkoutData = {
+            idUsuario: usuario.idUsuario,         
+            direccionEnvio: direccion,
+            ciudadEnvio: zonaEnvio,
+            codigoPostal: "00000",
+
+            metodoPago: "Contra entrega",
+            costoEnvio: costoEnvio,
+
+            subtotal: carrito.reduce((t, p) => t + p.precio, 0),
+            total: carrito.reduce((t, p) => t + p.precio, 0) + costoEnvio,
+
+            items: carrito.map(p => ({
+                idProducto: p.id,
+                cantidad: 1,
+                precioUnitario: p.precio
+            }))
+        };
+
+
+        let respuesta;
+        try {
+
+            respuesta = await fetch("http://localhost:8082/api/checkout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    // Si usas token:
+                    // "Authorization": "Bearer " + localStorage.getItem("token")
+                },
+                body: JSON.stringify(checkoutData)
+            }).then(r => r.json());
+
+        } catch (err) {
+            console.error(err);
+            alert("Hubo un error con el servidor.");
+            return;
+        }
+
+        if (!respuesta.success) {
+            alert("Error al procesar el pedido.");
+            return;
+        }
+
+        // -------------------------------------------------------
+        // 🚀  El backend ya generó Pedido + Factura con número B001-000001
+        // -------------------------------------------------------
+
+        const numeroFactura = respuesta.numeroFactura;
+
+        // Armar mensaje de WhatsApp FINAL
+        let mensaje = `🧾 *BOLETA GENERADA*\n`;
+        mensaje += `*N°:* ${numeroFactura}\n\n`;
+
+        mensaje += `🛒 *COMPRA REALIZADA*\n\n`;
         mensaje += `👤 *Cliente:* ${nombre}\n`;
         mensaje += `📱 *Teléfono:* ${telefono}\n`;
         if (email) mensaje += `📧 *Email:* ${email}\n`;
         mensaje += `📍 *Dirección:* ${direccion}\n`;
-        mensaje += `🚚 *Zona de envío:* ${zonaEnvio}\n\n`;
-        
+        mensaje += `🚚 *Zona:* ${zonaEnvio}\n\n`;
+
         mensaje += `📦 *PRODUCTOS:*\n`;
-        carrito.forEach((producto, index) => {
-            mensaje += `${index + 1}. ${producto.titulo} - S/ ${producto.precio.toFixed(2)}\n`;
+        carrito.forEach((p, i) => {
+            mensaje += `${i + 1}. ${p.titulo} - S/ ${p.precio.toFixed(2)}\n`;
         });
-        
-        mensaje += `\n💰 *RESUMEN:*\n`;
-        mensaje += `• Subtotal: S/ ${subtotal.toFixed(2)}\n`;
-        mensaje += `• Envío: S/ ${costoEnvio.toFixed(2)}\n`;
-        mensaje += `• *Total: S/ ${total.toFixed(2)}*\n`;
-        
+
+        mensaje += `\n💰 *TOTAL:* S/ ${(checkoutData.total).toFixed(2)}\n`;
+
         if (comentarios) {
             mensaje += `\n📝 *Comentarios:* ${comentarios}`;
         }
-        
-        // Enviar por WhatsApp
-        const numeroWhatsApp = "51918341898";
-        const mensajeCodificado = encodeURIComponent(mensaje);
-        const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensajeCodificado}`;
-        
-        // Abrir WhatsApp
-        window.open(urlWhatsApp, "_blank");
-        
-        // Mostrar confirmación
-        alert("¡Pedido enviado! Te redirigiremos a WhatsApp para confirmar tu compra.");
 
+        // Abrir WhatsApp
+        const numeroWhatsApp = "51918341898";
+        const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`;
+
+        window.open(urlWhatsApp, "_blank");
+
+        alert("¡Pedido enviado correctamente! Se te ha generado tu boleta.");
+        localStorage.removeItem("carrito");
     });
-    
-    // Botón para cambiar zona de envío
+
+    // ---------------------- ZONA DE ENVÍO ------------------------
     $("#btn-cambiar-zona").on("click", function() {
         $("#modal-envio").addClass("modal-visible");
     });
-    
-    // Manejar selección de nueva zona
+
     $(".zona-item:not(.zona-otros)").on("click", function() {
         const zona = $(this).data("zona");
         const costo = $(this).data("costo");
-        
-        // Actualizar localStorage
+
         localStorage.setItem("zonaEnvio", zona);
         localStorage.setItem("costoEnvio", costo);
-        
-        // Recargar datos
+
         cargarDatosCheckout();
-        
-        // Cerrar modal
+
         $("#modal-envio").removeClass("modal-visible");
-        
-        // Mostrar confirmación
         alert(`Zona de envío cambiada a: ${zona} - S/ ${costo}.00`);
     });
-    
-    // Cerrar modal de envío
+
     $(".modal-cerrar-envio").on("click", function() {
         $("#modal-envio").removeClass("modal-visible");
     });
-    
+
     $("#modal-envio").on("click", function(e) {
         if (e.target === this) {
             $(this).removeClass("modal-visible");
         }
     });
-    
-    // Botón de WhatsApp para otros lugares
+
     $(".boton-whatsapp").on("click", function(e) {
         e.stopPropagation();
-        const mensaje = encodeURIComponent("Hola! Quisiera consultar el costo de envío para mi pedido a otra zona de Perú.");
+        const mensaje = encodeURIComponent("Hola! Quisiera consultar el costo de envío para otra zona.");
         const numeroWhatsApp = "51918341898";
         window.open(`https://wa.me/${numeroWhatsApp}?text=${mensaje}`, "_blank");
     });
-    
-    // Cargar datos al iniciar
+
     cargarDatosCheckout();
 });

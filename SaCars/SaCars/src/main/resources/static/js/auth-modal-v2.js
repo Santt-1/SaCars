@@ -35,12 +35,13 @@ $(document).ready(function () {
 
             success: function (response) {
                 if (response.success) {
-                    // ✅ GUARDAR EN LOCALSTORAGE
-                    localStorage.setItem('token', response.data.token);
-                    localStorage.setItem('usuario', JSON.stringify(response.data.usuario));
-                    
+
+                    // Guardar en LocalStorage
+                    localStorage.setItem("token", response.data.token);
+                    localStorage.setItem("usuario", JSON.stringify(response.data.usuario));
+
                     alert("Bienvenido " + response.data.usuario.nombre);
-                    window.location.href = "/";  
+                    window.location.href = "/";
                 } else {
                     $("#login-error").text(response.message);
                 }
@@ -53,7 +54,7 @@ $(document).ready(function () {
     });
 
     // ---------------------------
-    // REGISTRO
+    // REGISTRO (con DNI)
     // ---------------------------
     $("#registro-form").submit(function (e) {
         e.preventDefault();
@@ -62,6 +63,7 @@ $(document).ready(function () {
         const data = {
             nombre: $("#registro-nombre").val(),
             apellido: $("#registro-apellido").val(),
+            dni: $("#registro-dni").val(),       // 👈 NUEVO
             email: $("#registro-email").val(),
             telefono: $("#registro-telefono").val(),
             password: $("#registro-password").val(),
@@ -69,6 +71,13 @@ $(document).ready(function () {
 
         const pass2 = $("#registro-password2").val();
 
+        // Validación de DNI
+        if (!data.dni || data.dni.length !== 8 || !/^\d+$/.test(data.dni)) {
+            $("#registro-error").text("El DNI debe tener 8 dígitos numéricos.");
+            return;
+        }
+
+        // Validación de contraseñas
         if (data.password !== pass2) {
             $("#registro-error").text("Las contraseñas no coinciden.");
             return;
@@ -84,10 +93,11 @@ $(document).ready(function () {
                 if (response.success) {
                     alert("¡Registro exitoso! Ahora inicia sesión.");
 
-                    // Cambiar a login automáticamente
+                    // Cambiar automáticamente al login
                     $('.tab-button[data-tab="login"]').click();
 
                     $("#registro-form")[0].reset();
+                    $("#registro-error").text("");
                 } else {
                     $("#registro-error").text(response.message);
                 }
