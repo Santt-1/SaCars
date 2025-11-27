@@ -98,6 +98,7 @@ $(document).ready(function () {
     if (zonaEnvio) {
       // Si ya hay zona seleccionada, agregar directamente
       const producto = {
+        id: $("#modal-producto").data("id"),
         titulo: $("#modal-titulo").text(),
         precio: parseFloat($("#modal-precio").text().replace("S/", "").trim()),
         imagen: $("#modal-img").attr("src"),
@@ -107,6 +108,7 @@ $(document).ready(function () {
     } else {
       // Si no hay zona, guardar producto temporal y abrir modal de envío
       productoTemporal = {
+        id: $("#modal-producto").data("id"),
         titulo: $("#modal-titulo").text(),
         precio: parseFloat($("#modal-precio").text().replace("S/", "").trim()),
         imagen: $("#modal-img").attr("src"),
@@ -179,11 +181,15 @@ $(document).ready(function () {
     // Verificar si ya hay una zona de envío seleccionada
     const zonaEnvio = localStorage.getItem("zonaEnvio");
     
-    const producto = {
-      titulo: $("#modal-titulo").text(),
-      precio: parseFloat($("#modal-precio").text().replace("S/", "").trim()),
-      imagen: $("#modal-img").attr("src"),
-    };
+    const idProducto = $("#modal-producto").data("id");
+
+      const producto = {
+          id: idProducto,
+          titulo: $("#modal-titulo").text(),
+          precio: parseFloat($("#modal-precio").text().replace("S/", "").trim()),
+          imagen: $("#modal-img").attr("src"),
+      };
+
 
     if (zonaEnvio) {
       // Si ya hay zona seleccionada, agregar y ir al checkout
@@ -323,6 +329,10 @@ function verificarAutenticacion() {
             $('#btn-logout').show().off('click').click(function(e) {
                 e.preventDefault();
                 cerrarSesion();
+            });
+            // Hacer clic en el nombre de usuario redirija al perfil
+            $('#usuario-conectado').css('cursor', 'pointer').off('click').on('click', function() {
+              window.location.href = '/perfil';
             });
         } catch (e) {
             console.error('Error al parsear usuario:', e);

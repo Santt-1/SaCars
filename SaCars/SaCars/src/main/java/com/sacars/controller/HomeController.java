@@ -25,6 +25,11 @@ public class HomeController {
     public String checkout() {
         return "checkout";
     }
+
+    @GetMapping("/perfil")
+    public String perfil() {
+        return "perfil";
+    }
     
     @GetMapping("/contacto")
     public String contacto() {

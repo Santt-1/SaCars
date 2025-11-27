@@ -1,5 +1,6 @@
 package com.sacars.model;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class Pedido {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_usuario")
+    @JsonIgnore
     private Usuario usuario;
 
     @Column(name = "fecha_pedido", nullable = false)
@@ -40,6 +42,7 @@ public class Pedido {
     private String metodoPago; // ej: Yape, Plin, Efectivo
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<DetallePedido> detalles = new ArrayList<>();
 
     // getters y setters

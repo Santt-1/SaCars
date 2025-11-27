@@ -2,18 +2,55 @@ $(document).ready(function () {
 
     // ---------------------- AUTOCARGAR DATOS DEL USUARIO ----------------------
     function cargarUsuario() {
-        const usuario = JSON.parse(localStorage.getItem("usuario"));
-        if (!usuario) {
+        const usuarioLocal = JSON.parse(localStorage.getItem("usuario"));
+        if (!usuarioLocal) {
             alert("Debes iniciar sesión para comprar.");
             window.location.href = "/auth/login";
             return;
         }
 
-        $("#nombre").val(usuario.nombre + " " + usuario.apellido);
-        $("#telefono").val(usuario.telefono);
-        $("#email").val(usuario.correo);
-        $("#dni").val(usuario.dni);
+        // Intentar obtener datos frescos desde el backend si tenemos id
+        const id = usuarioLocal.id;
+        if (!id) {
+            // Si por alguna razón no hay id, usar localStorage antiguo
+            $("#nombre").val(usuarioLocal.nombre + " " + usuarioLocal.apellido);
+            $("#telefono").val(usuarioLocal.telefono);
+            $("#email").val(usuarioLocal.correo);
+            $("#dni").val(usuarioLocal.dni);
+            return;
+        }
 
+        fetch(`http://localhost:8082/api/usuarios/${id}`)
+            .then(res => {
+                if (!res.ok) throw new Error("No se pudo obtener usuario");
+                return res.json();
+            })
+            .then(usuarioBackend => {
+                // Normalizar campos según respuesta del backend
+                const usuario = {
+                    id: usuarioBackend.id ?? id,
+                    nombre: usuarioBackend.nombre ?? usuarioBackend.nombre,
+                    apellido: usuarioBackend.apellido ?? usuarioBackend.apellido,
+                    telefono: usuarioBackend.telefono ?? usuarioBackend.telefono,
+                    correo: usuarioBackend.correo ?? usuarioBackend.correo,
+                    dni: usuarioBackend.dni ?? usuarioBackend.dni
+                };
+                // actualizar localStorage para sincronizar con cambios de perfil
+                localStorage.setItem("usuario", JSON.stringify(usuario));
+
+                $("#nombre").val(usuario.nombre + " " + usuario.apellido);
+                $("#telefono").val(usuario.telefono);
+                $("#email").val(usuario.correo);
+                $("#dni").val(usuario.dni);
+            })
+            .catch(err => {
+                console.warn("No se pudo sincronizar usuario:", err);
+                // fallback a localStorage si falla
+                $("#nombre").val(usuarioLocal.nombre + " " + usuarioLocal.apellido);
+                $("#telefono").val(usuarioLocal.telefono);
+                $("#email").val(usuarioLocal.correo);
+                $("#dni").val(usuarioLocal.dni);
+            });
     }
 
     cargarUsuario();
@@ -118,7 +155,7 @@ $(document).ready(function () {
             total: carrito.reduce((t, p) => t + p.precio, 0) + costoEnvio,
             dniCliente: usuario.dni,
             items: carrito.map(p => ({
-                idProducto: p.idProducto,
+                idProducto: p.id,
                 cantidad: 1,
                 precioUnitario: p.precio
             }))
@@ -153,14 +190,19 @@ $(document).ready(function () {
         let mensaje = `🧾 *PEDIDO REALIZADO*\n`;
         mensaje += `Factura: ${respuesta.numeroFactura}\n\n`;
         mensaje += `📍 Dirección: ${direccion}\n`;
-        mensaje += `🚚 Zona: ${zonaEnvio}\n\n`;
+        mensaje += `🚚 Zona de envío: ${zonaEnvio}\n`;
+        mensaje += `💵 Costo de envío: S/ ${costoEnvio.toFixed(2)}\n\n`;
 
         mensaje += `📦 *PRODUCTOS:*\n`;
         carrito.forEach((p, i) => {
             mensaje += `${i + 1}. ${p.titulo} - S/ ${p.precio.toFixed(2)}\n`;
         });
 
-        mensaje += `\n💰 *TOTAL:* S/ ${(checkoutData.total).toFixed(2)}\n`;
+        const subtotal = carrito.reduce((t, p) => t + p.precio, 0);
+        mensaje += `\n💰 *RESUMEN:*\n`;
+        mensaje += `Subtotal: S/ ${subtotal.toFixed(2)}\n`;
+        mensaje += `Envío: S/ ${costoEnvio.toFixed(2)}\n`;
+        mensaje += `*TOTAL: S/ ${(checkoutData.total).toFixed(2)}*\n`;
 
         if (comentarios) {
             mensaje += `\n📝 Comentarios: ${comentarios}`;

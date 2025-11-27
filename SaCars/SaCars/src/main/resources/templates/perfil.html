@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - SaCars</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .perfil-contenedor {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .perfil-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .perfil-tab-btn {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .perfil-tab-btn.activo {
+            color: #FFAD00;
+            border-bottom-color: #FFAD00;
+        }
+
+        .perfil-tab-btn:hover {
+            color: #FFAD00;
+        }
+
+        .perfil-seccion {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .perfil-seccion.activo {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .perfil-info {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .perfil-campo {
+            margin-bottom: 20px;
+        }
+
+        .perfil-campo label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .perfil-campo input,
+        .perfil-campo textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .perfil-campo input:focus,
+        .perfil-campo textarea:focus {
+            outline: none;
+            border-color: #FFAD00;
+            box-shadow: 0 0 5px rgba(255,173,0,0.2);
+        }
+
+        .perfil-acciones {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .boton-guardar {
+            background: #FFAD00;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .boton-guardar:hover {
+            background: #E09A00;
+        }
+
+        .boton-cancelar {
+            background: #ddd;
+            color: #333;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .boton-cancelar:hover {
+            background: #ccc;
+        }
+
+        .pedidos-contenedor {
+            display: grid;
+            gap: 15px;
+        }
+
+        .pedido-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #FFAD00;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .pedido-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .pedido-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .pedido-numero {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .pedido-estado {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .estado-pendiente {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .estado-procesando {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .estado-enviado {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .estado-entregado {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .pedido-detalles {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .pedido-total {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FFAD00;
+        }
+
+        .sin-pedidos {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .modal-pedido {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-pedido.activo {
+            display: flex;
+        }
+
+        .modal-pedido-contenido {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-cerrar {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-cerrar:hover {
+            color: #333;
+        }
+
+        .producto-lista {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        .producto-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .producto-item:last-child {
+            border-bottom: none;
+        }
+
+        .producto-info h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+
+        .producto-info p {
+            margin: 0;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .alerta {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alerta.exito {
+            background: #d1e7dd;
+            color: #0f5132;
+            border: 1px solid #badbcc;
+            display: block;
+        }
+
+        .alerta.error {
+            background: #f8d7da;
+            color: #842029;
+            border: 1px solid #f5c2c7;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="contenedor contenido-header">
+            <div class="barra">
+                <a href="/">
+                    <img class="logo" src="/img/logoprincipal.png" alt="Logotipo de SaCars">
+                </a>
+                <nav class="navegacion">
+                    <a href="/">Inicio</a>
+                    <a href="/catalogo">Catálogo</a>
+                    <a href="/mas-sobre-nosotros">Más sobre nosotros</a>
+                    <a href="/contacto">Contacto</a>
+                    <a href="/carrito" class="carrito-icono">
+                        <img src="/img/carritocompras.png" alt="Carrito">
+                        <span class="contador-carrito" style="display: none;">0</span>
+                    </a>
+                </nav>
+
+                <div class="nav-auth">
+                    <span id="usuario-conectado" style="display:none; color: #333; margin-right: 15px;">
+                        👤 <strong id="nombre-usuario"></strong>
+                    </span>
+                    <a href="/auth/login" class="btn-login-header" id="btn-login">🔐 Ingresar</a>
+                    <a href="#" id="btn-logout" class="btn-logout-header" style="display:none;">🚪 Salir</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="perfil-contenedor">
+        <h1>Mi Perfil</h1>
+
+        <div class="perfil-tabs">
+            <button class="perfil-tab-btn activo" data-tab="informacion">
+                📋 Información Personal
+            </button>
+            <button class="perfil-tab-btn" data-tab="pedidos">
+                📦 Mis Pedidos
+            </button>
+        </div>
+
+        <!-- TAB: Información Personal -->
+        <div class="perfil-seccion activo" id="tab-informacion">
+            <div id="alerta-info" class="alerta"></div>
+
+            <div class="perfil-info">
+                <h2>Información Personal</h2>
+
+                <div class="perfil-campo">
+                    <label>Nombre</label>
+                    <input type="text" id="nombre" placeholder="Ej: Juan">
+                </div>
+
+                <div class="perfil-campo">
+                    <label>Apellido</label>
+                    <input type="text" id="apellido" placeholder="Ej: Pérez">
+                </div>
+
+                <div class="perfil-campo">
+                    <label>Email</label>
+                    <input type="email" id="email" placeholder="Ej: juan@example.com">
+                </div>
+
+                <div class="perfil-campo">
+                    <label>Teléfono</label>
+                    <input type="tel" id="telefono" placeholder="Ej: 918341898">
+                </div>
+
+                <div class="perfil-campo">
+                    <label>DNI</label>
+                    <input type="text" id="dni" placeholder="Ej: 12345678">
+                </div>
+
+                <div class="perfil-campo">
+                    <label>Dirección</label>
+                    <textarea id="direccion" placeholder="Ej: Calle Principal 123" rows="3"></textarea>
+                </div>
+
+                <div class="perfil-acciones">
+                    <button class="boton-guardar" id="btn-guardar">💾 Guardar Cambios</button>
+                    <button class="boton-cancelar" id="btn-cancelar">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: Mis Pedidos -->
+        <div class="perfil-seccion" id="tab-pedidos">
+            <h2>Historial de Pedidos</h2>
+            <div class="pedidos-contenedor" id="pedidos-lista">
+                <div class="sin-pedidos">📭 No tienes pedidos aún</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal para detalles de pedido -->
+    <div class="modal-pedido" id="modal-pedido">
+        <div class="modal-pedido-contenido">
+            <span class="modal-cerrar" onclick="cerrarModalPedido()">&times;</span>
+            <h2 id="modal-pedido-titulo">Detalles del Pedido</h2>
+
+            <div>
+                <p><strong>Factura:</strong> <span id="modal-factura"></span></p>
+                <p><strong>Fecha:</strong> <span id="modal-fecha"></span></p>
+                <p><strong>Estado:</strong> <span id="modal-estado"></span></p>
+                <p><strong>Dirección:</strong> <span id="modal-direccion"></span></p>
+                <p><strong>Zona:</strong> <span id="modal-zona"></span></p>
+            </div>
+
+            <div class="producto-lista">
+                <h3>Productos</h3>
+                <div id="modal-productos"></div>
+            </div>
+
+            <div>
+                <p><strong>Total:</strong> <span id="modal-total" style="font-size: 18px; color: #FFAD00;"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="contenedor">
+            <p class="copyright">Todos los Derechos Reservados SaCars 2025 &copy;</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="/js/perfil.js"></script>
+</body>
+</html>

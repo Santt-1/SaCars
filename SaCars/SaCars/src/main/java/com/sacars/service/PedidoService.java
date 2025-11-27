@@ -43,6 +43,10 @@ public class PedidoService {
         pedido.setCodigoPostal(request.getCodigoPostal());
         pedido.setMetodoPago(request.getMetodoPago());
 
+        if (request.getItems() == null || request.getItems().isEmpty()) {
+            throw new RuntimeException("No se enviaron items en el pedido");
+        }
+
         // Calculamos subtotal a partir de los items por seguridad
         BigDecimal subtotal = BigDecimal.ZERO;
         List<DetallePedido> detalles = new ArrayList<>();
@@ -66,8 +70,9 @@ public class PedidoService {
             detalles.add(detalle);
         }
 
-        // total = subtotal + costo de envío
-        BigDecimal total = subtotal.add(request.getCostoEnvio());
+        // total = subtotal + costo de envío (si no viene, asumimos 0)
+        BigDecimal costoEnvio = request.getCostoEnvio() != null ? request.getCostoEnvio() : BigDecimal.ZERO;
+        BigDecimal total = subtotal.add(costoEnvio);
 
         pedido.setTotal(total);
         pedido.setDetalles(detalles);
@@ -80,7 +85,7 @@ public class PedidoService {
         pedidoGuardado,
         subtotal,
         total,
-        request.getDniCliente() // ← LISTO, YA NO DA ERROR
-);
+        usuario.getDni()
+    );
     }
 }

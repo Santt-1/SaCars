@@ -13,15 +13,23 @@ $(document).ready(function() {
         const boton = e.target.closest('.btn-ver-producto');
         if (!boton) return;
         
+        const id = boton.dataset.id;
         const imagen = boton.dataset.imagen;
         const titulo = boton.dataset.titulo;
         const descripcion = boton.dataset.descripcion;
         const precio = boton.dataset.precio;
 
+        // Guardar ID en el modal
+        $("#modal-id").text(id);
+        // También establecer el atributo `data-id` en el contenedor del modal
+        $("#modal-producto").attr("data-id", id);
+        // y almacenarlo en la cache de datos de jQuery para lecturas con .data()
+        $("#modal-producto").data("id", id);
+
         modalImg.src = imagen;
         modalTitulo.textContent = titulo;
         modalDescripcion.textContent = descripcion;
-        modalPrecio.textContent = precio;
+        modalPrecio.textContent = "S/ " + precio;
         
         modal.classList.add('modal-visible');
     }
@@ -47,19 +55,8 @@ $(document).ready(function() {
             abrirModal(e);
         }
         
-        // Comprar ahora - redirigir si no está logueado
-        if (e.target.classList.contains('boton-comprar')) {
-            if (!verificarYRedirigir()) return;
-            // Aquí va la lógica de compra para usuarios logueados
-            alert('Función de compra para usuarios logueados');
-        }
-        
-        // Agregar al carrito - redirigir si no está logueado
-        if (e.target.classList.contains('boton-agregar')) {
-            if (!verificarYRedirigir()) return;
-            // Aquí va la lógica del carrito para usuarios logueados
-            alert('Producto agregado al carrito');
-        }
+        // Nota: acciones de "Agregar" y "Comprar" son manejadas en `main.js`.
+
     });
 
     // Event listeners para cerrar modal

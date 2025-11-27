@@ -27,7 +27,14 @@ public class CheckoutController {
 
     @PostMapping
     public ResponseEntity<?> finalizarCompra(@RequestBody CheckoutRequestDTO request) {
-
+        System.out.println("📦 REQUEST RECIBIDO:");
+        System.out.println("ID usuario: " + request.getIdUsuario());
+        System.out.println("Items:");
+        request.getItems().forEach(i -> {
+            System.out.println(" - idProducto: " + i.getIdProducto());
+            System.out.println("   cantidad: " + i.getCantidad());
+            System.out.println("   precio: " + i.getPrecioUnitario());
+        });
         if (request.getIdUsuario() == null) {
             return ResponseEntity.badRequest().body(
                     Map.of("success", false, "message", "ID de usuario no enviado")
@@ -37,15 +44,22 @@ public class CheckoutController {
         Usuario usuario = usuarioService.buscarPorId(request.getIdUsuario())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        Factura factura = pedidoService.crearPedidoYFactura(request, usuario);
+        try {
+            Factura factura = pedidoService.crearPedidoYFactura(request, usuario);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("idFactura", factura.getId());
-        response.put("numeroFactura", factura.getNumeroFactura());
-        response.put("idPedido", factura.getPedido().getId());
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("idFactura", factura.getId());
+            response.put("numeroFactura", factura.getNumeroFactura());
+            response.put("idPedido", factura.getPedido().getId());
 
-        return ResponseEntity.ok(response);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException ex) {
+            Map<String, Object> err = new HashMap<>();
+            err.put("success", false);
+            err.put("message", ex.getMessage());
+            return ResponseEntity.status(500).body(err);
+        }
     }
 
 }
