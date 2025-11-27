@@ -13,10 +13,11 @@ $(document).ready(function () {
         const id = usuarioLocal.id;
         if (!id) {
             // Si por alguna razón no hay id, usar localStorage antiguo
+            console.log("Usuario sin ID, usando localStorage:", usuarioLocal);
             $("#nombre").val(usuarioLocal.nombre + " " + usuarioLocal.apellido);
-            $("#telefono").val(usuarioLocal.telefono);
-            $("#email").val(usuarioLocal.correo);
-            $("#dni").val(usuarioLocal.dni);
+            $("#telefono").val(usuarioLocal.telefono || '');
+            $("#email").val(usuarioLocal.correo || usuarioLocal.email || '');
+            $("#dni").val(usuarioLocal.dni || '');
             return;
         }
 
@@ -32,24 +33,26 @@ $(document).ready(function () {
                     nombre: usuarioBackend.nombre ?? usuarioBackend.nombre,
                     apellido: usuarioBackend.apellido ?? usuarioBackend.apellido,
                     telefono: usuarioBackend.telefono ?? usuarioBackend.telefono,
-                    correo: usuarioBackend.correo ?? usuarioBackend.correo,
+                    correo: usuarioBackend.correo ?? usuarioBackend.email,
                     dni: usuarioBackend.dni ?? usuarioBackend.dni
                 };
                 // actualizar localStorage para sincronizar con cambios de perfil
                 localStorage.setItem("usuario", JSON.stringify(usuario));
 
+                console.log("Usuario desde backend:", usuario);
                 $("#nombre").val(usuario.nombre + " " + usuario.apellido);
-                $("#telefono").val(usuario.telefono);
-                $("#email").val(usuario.correo);
-                $("#dni").val(usuario.dni);
+                $("#telefono").val(usuario.telefono || '');
+                $("#email").val(usuario.correo || usuario.email || '');
+                $("#dni").val(usuario.dni || '');
             })
             .catch(err => {
                 console.warn("No se pudo sincronizar usuario:", err);
+                console.log("Usuario desde localStorage:", usuarioLocal);
                 // fallback a localStorage si falla
                 $("#nombre").val(usuarioLocal.nombre + " " + usuarioLocal.apellido);
-                $("#telefono").val(usuarioLocal.telefono);
-                $("#email").val(usuarioLocal.correo);
-                $("#dni").val(usuarioLocal.dni);
+                $("#telefono").val(usuarioLocal.telefono || '');
+                $("#email").val(usuarioLocal.correo || usuarioLocal.email || '');
+                $("#dni").val(usuarioLocal.dni || '');
             });
     }
 
@@ -214,6 +217,7 @@ $(document).ready(function () {
         alert("Pedido realizado con éxito.");
 
         localStorage.removeItem("carrito");
+        window.location.href = "/catalogo";
     });
 
 

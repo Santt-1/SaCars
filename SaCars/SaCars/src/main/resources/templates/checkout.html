@@ -1,27 +1,39 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finalizar Compra - SaCars</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
+
 <body>
-    <header class="site-header compacto">
+    <header class="site-header">
         <div class="contenedor contenido-header">
             <div class="barra">
-                <a href="index.html">
-                    <img class="logo" src="img/logoprincipal.png" alt="Logotipo de SaCars">
+                <a href="/">
+                    <img class="logo" src="/img/logoprincipal.png" alt="Logotipo de SaCars">
                 </a>
                 <nav class="navegacion">
-                    <a href="index.html">Inicio</a>
-                    <a href="catalogo.html">Catálogo</a>
-                    <a href="mas-sobre-nosotros.html">Más sobre nosotros</a>
-                    <a href="contacto.html">Contacto</a>
+                    <a href="/">Inicio</a>
+                    <a href="/catalogo">Catálogo</a>
+                    <a href="/mas-sobre-nosotros">Más sobre nosotros</a>
+                    <a href="/contacto">Contacto</a>
+
+                    <a href="/carrito" class="carrito-icono">
+                        <img src="/img/carritocompras.png" alt="Carrito">
+                        <span class="contador-carrito" style="display: none;">0</span>
+                    </a>
                 </nav>
-                <a href="carrito.html" class="carrito-icono">
-                    <img src="img/carritocompras.png" alt="Icono de carrito de compras">
-                </a>
+
+                <div class="nav-auth">
+                    <span id="usuario-conectado" style="display:none; color: #333; margin-right: 15px;">
+                        👤 <strong id="nombre-usuario"></strong>
+                    </span>
+                    <a href="/auth/login" class="btn-login-header">🔐 Ingresar</a>
+                    <a href="#" id="btn-logout" class="btn-logout-header" style="display:none;">🚪 Salir</a>
+                </div>
             </div>
         </div>
     </header>
@@ -34,7 +46,7 @@
                 <h3>📦 Tu Pedido</h3>
                 <div id="checkout-productos" class="checkout-productos-lista">
                 </div>
-                
+
                 <div class="checkout-totales">
                     <div class="total-linea">
                         <span>Subtotal:</span>
@@ -53,7 +65,7 @@
             </div>
             <div class="checkout-formulario">
                 <h3>📝 Datos de Entrega</h3>
-                
+
                 <form id="form-checkout">
                     <div class="form-grupo">
                         <label for="nombre">Nombre Completo</label>
@@ -67,7 +79,7 @@
 
                     <div class="form-grupo">
                         <label for="email">Email</label>
-                        <input type="text" id="email" disabled>
+                        <input type="email" id="email" disabled>
                     </div>
                     <div class="form-grupo">
                         <label for="dni">DNI *</label>
@@ -76,7 +88,8 @@
 
                     <div class="form-grupo">
                         <label for="direccion">Dirección de Entrega *</label>
-                        <textarea id="direccion" name="direccion" required placeholder="Ingresa tu dirección completa con referencias"></textarea>
+                        <textarea id="direccion" name="direccion" required
+                            placeholder="Ingresa tu dirección completa con referencias"></textarea>
                     </div>
 
                     <div class="form-grupo">
@@ -85,7 +98,8 @@
                     </div>
                     <div class="form-grupo">
                         <label for="comentarios">Comentarios (opcional)</label>
-                        <textarea id="comentarios" name="comentarios" placeholder="Alguna referencia extra o comentario..."></textarea>
+                        <textarea id="comentarios" name="comentarios"
+                            placeholder="Alguna referencia extra o comentario..."></textarea>
                     </div>
                     <div class="checkout-acciones">
                         <button type="button" id="btn-cambiar-zona" class="boton-amarillo btn-outline">
@@ -111,8 +125,9 @@
             <span class="modal-cerrar-envio">&times;</span>
             <div class="modal-envio-body">
                 <h3>Cambiar zona de envío</h3>
-                <p class="modal-envio-descripcion">Selecciona una nueva zona de envío. Esto actualizará el costo total de tu pedido.</p>
-                
+                <p class="modal-envio-descripcion">Selecciona una nueva zona de envío. Esto actualizará el costo total
+                    de tu pedido.</p>
+
                 <div class="zonas-envio">
                     <div class="zona-item" data-zona="Banda de Shilcayo" data-costo="5">
                         <div class="zona-info">
@@ -120,21 +135,21 @@
                             <p class="zona-precio">S/ 5.00</p>
                         </div>
                     </div>
-                    
+
                     <div class="zona-item" data-zona="Tarapoto" data-costo="7">
                         <div class="zona-info">
                             <h4>📍 Tarapoto</h4>
                             <p class="zona-precio">S/ 7.00</p>
                         </div>
                     </div>
-                    
+
                     <div class="zona-item" data-zona="Morales" data-costo="10">
                         <div class="zona-info">
                             <h4>📍 Morales</h4>
                             <p class="zona-precio">S/ 10.00</p>
                         </div>
                     </div>
-                    
+
                     <div class="zona-item zona-otros" data-zona="Otros">
                         <div class="zona-info">
                             <h4>📍 Otros lugares de Perú</h4>
@@ -148,7 +163,9 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/checkout.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/auth-check.js"></script>
+    <script src="/js/checkout.js"></script>
 </body>
+
 </html>

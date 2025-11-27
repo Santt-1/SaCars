@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil - SaCars</title>
     <link rel="stylesheet" href="/css/styles.css">
     <style>
+        /* ---- CONTENEDOR GENERAL ---- */
         .perfil-contenedor {
-            max-width: 1000px;
-            margin: 40px auto;
+            max-width: 1100px;
+            margin: 50px auto;
             padding: 20px;
+            color: #f1f1f1;
         }
 
+        /* ---- TABS ---- */
         .perfil-tabs {
             display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ddd;
+            gap: 15px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.15);
         }
 
         .perfil-tab-btn {
@@ -25,23 +29,24 @@
             border: none;
             cursor: pointer;
             font-size: 16px;
-            color: #666;
+            color: #b8b8b8;
             border-bottom: 3px solid transparent;
-            transition: all 0.3s;
+            transition: 0.3s;
         }
 
         .perfil-tab-btn.activo {
             color: #FFAD00;
-            border-bottom-color: #FFAD00;
+            border-bottom: 3px solid #FFAD00;
         }
 
         .perfil-tab-btn:hover {
             color: #FFAD00;
         }
 
+        /* ---- SECCIONES ---- */
         .perfil-seccion {
             display: none;
-            animation: fadeIn 0.3s ease-in;
+            animation: fadeIn 0.3s ease-in-out;
         }
 
         .perfil-seccion.activo {
@@ -51,125 +56,145 @@
         @keyframes fadeIn {
             from {
                 opacity: 0;
+                transform: translateY(10px);
             }
+
             to {
                 opacity: 1;
+                transform: translateY(0);
             }
         }
 
+        /* ---- TARJETA DE INFORMACIÓN ---- */
         .perfil-info {
-            background: #f9f9f9;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: #161b22;
+            /* un gris oscuro bonito */
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
+        .perfil-info h2 {
+            color: #fff;
+            margin-bottom: 25px;
+        }
+
+        /* ---- CAMPOS ---- */
         .perfil-campo {
             margin-bottom: 20px;
         }
 
         .perfil-campo label {
-            display: block;
             font-weight: 600;
-            margin-bottom: 8px;
-            color: #333;
+            margin-bottom: 6px;
+            color: #ddd;
+            display: block;
         }
 
         .perfil-campo input,
         .perfil-campo textarea {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            font-family: inherit;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            background: #0d1117;
+            color: #eee;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        .perfil-campo input::placeholder,
+        .perfil-campo textarea::placeholder {
+            color: #777;
         }
 
         .perfil-campo input:focus,
         .perfil-campo textarea:focus {
             outline: none;
             border-color: #FFAD00;
-            box-shadow: 0 0 5px rgba(255,173,0,0.2);
+            box-shadow: 0 0 8px rgba(255, 173, 0, 0.3);
         }
 
+        /* ---- BOTONES ---- */
         .perfil-acciones {
             display: flex;
             gap: 10px;
-            margin-top: 20px;
+            margin-top: 25px;
         }
 
         .boton-guardar {
             background: #FFAD00;
-            color: #fff;
+            color: #0d1117;
             border: none;
-            padding: 12px 24px;
-            border-radius: 4px;
+            padding: 12px 26px;
+            border-radius: 6px;
             cursor: pointer;
-            font-weight: 600;
-            transition: background 0.3s;
+            font-weight: 700;
+            font-size: 15px;
+            transition: 0.2s;
         }
 
         .boton-guardar:hover {
-            background: #E09A00;
+            background: #e79a00;
         }
 
         .boton-cancelar {
-            background: #ddd;
-            color: #333;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 4px;
+            background: #2d2d2d;
+            color: #ddd;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 26px;
+            border-radius: 6px;
             cursor: pointer;
-            font-weight: 600;
-            transition: background 0.3s;
+            transition: 0.2s;
         }
 
         .boton-cancelar:hover {
-            background: #ccc;
+            background: #3c3c3c;
         }
 
+        /* ---- TARJETAS DE PEDIDOS ---- */
         .pedidos-contenedor {
             display: grid;
-            gap: 15px;
+            gap: 18px;
         }
 
         .pedido-card {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
+            background: #1c2128;
+            padding: 22px;
+            border-radius: 10px;
             border-left: 4px solid #FFAD00;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 0 18px rgba(0, 0, 0, 0.4);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: 0.3s;
         }
 
         .pedido-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(255, 173, 0, 0.25);
         }
 
         .pedido-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             margin-bottom: 10px;
+            color: #fff;
         }
 
         .pedido-numero {
             font-weight: 600;
-            color: #333;
         }
 
         .pedido-estado {
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .estado-pendiente {
             background: #fff3cd;
-            color: #856404;
+            color: #664d03;
         }
 
         .estado-procesando {
@@ -177,29 +202,23 @@
             color: #084298;
         }
 
-        .estado-enviado {
-            background: #d1e7dd;
-            color: #0f5132;
-        }
-
+        .estado-enviado,
         .estado-entregado {
             background: #d1e7dd;
             color: #0f5132;
         }
 
         .pedido-detalles {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            color: #bbb;
             font-size: 14px;
-            color: #666;
-            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
         }
 
         .pedido-total {
             font-size: 18px;
-            font-weight: 600;
             color: #FFAD00;
+            font-weight: bold;
         }
 
         .sin-pedidos {
@@ -208,6 +227,7 @@
             color: #999;
         }
 
+        /* ---- MODAL ---- */
         .modal-pedido {
             display: none;
             position: fixed;
@@ -215,10 +235,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.65);
             z-index: 1000;
-            align-items: center;
             justify-content: center;
+            align-items: center;
         }
 
         .modal-pedido.activo {
@@ -226,42 +246,44 @@
         }
 
         .modal-pedido-contenido {
-            background: white;
-            border-radius: 8px;
+            background: #0d1117;
+            color: #f1f1f1;
+            border-radius: 12px;
             padding: 30px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
+            width: 95%;
+            max-width: 650px;
+            max-height: 85vh;
             overflow-y: auto;
-            position: relative;
+            box-shadow: 0 0 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.07);
         }
 
         .modal-cerrar {
             position: absolute;
             top: 15px;
-            right: 15px;
-            font-size: 24px;
+            right: 25px;
             cursor: pointer;
-            color: #999;
+            color: #aaa;
+            font-size: 26px;
+            transition: .2s;
         }
 
         .modal-cerrar:hover {
-            color: #333;
+            color: #FFAD00;
         }
 
         .producto-lista {
-            margin: 20px 0;
+            margin-top: 20px;
+            background: #161b22;
             padding: 20px;
-            background: #f9f9f9;
-            border-radius: 4px;
+            border-radius: 8px;
         }
 
         .producto-item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
         }
 
         .producto-item:last-child {
@@ -269,38 +291,28 @@
         }
 
         .producto-info h4 {
-            margin: 0 0 5px 0;
-            color: #333;
+            color: #fff;
         }
 
         .producto-info p {
-            margin: 0;
-            color: #999;
-            font-size: 13px;
+            color: #ccc;
         }
 
-        .alerta {
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
+        /* Mensajes de alerta */
         .alerta.exito {
-            background: #d1e7dd;
-            color: #0f5132;
-            border: 1px solid #badbcc;
-            display: block;
+            background: rgba(26, 255, 115, 0.1);
+            color: #5df598;
+            border-left: 4px solid #21d977;
         }
 
         .alerta.error {
-            background: #f8d7da;
-            color: #842029;
-            border: 1px solid #f5c2c7;
-            display: block;
+            background: rgba(255, 64, 64, 0.15);
+            color: #ff6b6b;
+            border-left: 4px solid #ff3b3b;
         }
     </style>
 </head>
+
 <body>
     <header class="site-header">
         <div class="contenedor contenido-header">
@@ -429,4 +441,5 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="/js/perfil.js"></script>
 </body>
+
 </html>
