@@ -22,20 +22,19 @@ public class FacturaService {
     }
 
     @Transactional
-    public Factura generarFacturaDesdePedido(Pedido pedido,
-                                             BigDecimal subtotal,
-                                             BigDecimal total) {
+    public Factura generarFacturaDesdePedido(Pedido pedido, BigDecimal subtotal, BigDecimal total, String dniCliente) {
 
         Usuario usuario = pedido.getUsuario();
 
-        // 1. Creamos factura con numero temporal para obtener el ID
+        // 1. Crear factura temporal
         Factura factura = new Factura();
         factura.setPedido(pedido);
         factura.setNumeroFactura("TEMP");
         factura.setFechaEmision(LocalDateTime.now());
 
         factura.setNombreCliente(usuario.getNombre() + " " + usuario.getApellido());
-        factura.setDniCliente(usuario.getDni());
+        factura.setDniCliente(dniCliente);  // ← CORREGIDO (antes: request.getDniCliente())
+
         factura.setSubtotal(subtotal);
         factura.setTotal(total);
 
@@ -45,10 +44,11 @@ public class FacturaService {
 
         factura = facturaRepository.save(factura);
 
-        // 2. Generar número correlativo con el id_factura
+        // 2. Generar número correlativo final
         String correlativo = String.format("%s-%06d", SERIE, factura.getId());
         factura.setNumeroFactura(correlativo);
 
         return facturaRepository.save(factura);
     }
+
 }

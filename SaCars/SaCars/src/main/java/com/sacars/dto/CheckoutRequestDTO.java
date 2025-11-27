@@ -9,7 +9,12 @@ public class CheckoutRequestDTO {
     private String ciudadEnvio;
     private String codigoPostal;
     private Long idUsuario;
+    private String dniCliente;
 
+
+    
+    public String getDniCliente() { return dniCliente; }
+    public void setDniCliente(String dniCliente) { this.dniCliente = dniCliente; }
 
     // Métodos de pago / envío
     private String metodoPago;   // Yape, Efectivo...

@@ -33,19 +33,30 @@ $(document).ready(function () {
             contentType: "application/json",
             data: JSON.stringify({ email, password }),
 
-            success: function (response) {
-                if (response.success) {
+        success: function (response) {
 
-                    // Guardar en LocalStorage
-                    localStorage.setItem("token", response.data.token);
-                    localStorage.setItem("usuario", JSON.stringify(response.data.usuario));
+            if (response.success) {
 
-                    alert("Bienvenido " + response.data.usuario.nombre);
-                    window.location.href = "/";
-                } else {
-                    $("#login-error").text(response.message);
-                }
-            },
+                const u = response.data.usuario;
+
+                localStorage.setItem("token", response.data.token);
+
+                localStorage.setItem("usuario", JSON.stringify({
+                    id: u.idUsuario,      // ← ESTE ES EL CORRECTO
+                    nombre: u.nombre,
+                    apellido: u.apellido,
+                    correo: u.email,      // ← backend lo manda como "email"
+                    telefono: u.telefono,
+                    dni: u.dni            // ← ya disponible en backend
+                }));
+
+                alert("Bienvenido " + u.nombre);
+                window.location.href = "/";
+
+            } else {
+                $("#login-error").text(response.message);
+            }
+        },
 
             error: function () {
                 $("#login-error").text("Error al conectar con el servidor.");

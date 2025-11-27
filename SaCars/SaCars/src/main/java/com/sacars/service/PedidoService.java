@@ -76,6 +76,11 @@ public class PedidoService {
         Pedido pedidoGuardado = pedidoRepository.save(pedido);
 
         // 2. Crear factura a partir del pedido
-        return facturaService.generarFacturaDesdePedido(pedidoGuardado, subtotal, total);
+        return facturaService.generarFacturaDesdePedido(
+        pedidoGuardado,
+        subtotal,
+        total,
+        request.getDniCliente() // ← LISTO, YA NO DA ERROR
+);
     }
 }
