@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaCars - Panel Administrativo</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <style>
+        .admin-badge {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #ffc107;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+            border: 2px solid #ffc107;
+        }
+        
+        .admin-login-title {
+            color: #1a1a2e;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .admin-login-subtitle {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body class="auth-body">
+    <div class="auth-container">
+        <div class="auth-box">
+            <div class="auth-header">
+                <a href="/">
+                    <img src="/img/logoprincipal.png" alt="Logo SaCars" class="auth-logo">
+                </a>
+                <h1>SaCars</h1>
+            </div>
+
+            <div style="text-align: center;">
+                <span class="admin-badge">🔐 ACCESO ADMINISTRATIVO</span>
+                <h2 class="admin-login-title">Panel de Administración</h2>
+                <p class="admin-login-subtitle">Ingresa tus credenciales de administrador</p>
+            </div>
+
+            <!-- LOGIN ADMIN -->
+            <div id="admin-login" class="auth-form active">
+                <form id="admin-login-form">
+                    <div class="form-group">
+                        <label for="admin-email">Correo Electrónico</label>
+                        <input type="email" id="admin-email" name="email" required placeholder="admin@sacars.com" autocomplete="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="admin-password">Contraseña</label>
+                        <input type="password" id="admin-password" name="password" required placeholder="••••••••" autocomplete="current-password">
+                    </div>
+
+                    <div class="form-remember">
+                        <input type="checkbox" id="remember-admin" name="remember">
+                        <label for="remember-admin">Mantener sesión iniciada</label>
+                    </div>
+
+                    <button type="submit" class="boton-amarillo btn-login">Acceder al Panel</button>
+                    <p class="form-error" id="admin-login-error"></p>
+                </form>
+
+                <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                    <p style="color: #666; font-size: 0.85rem;">
+                        ¿Eres cliente? 
+                        <a href="/auth/login" style="color: #ffc107; font-weight: 600; text-decoration: none;">
+                            Ingresa aquí
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="/js/auth-admin-login.js"></script>
+</body>
+</html>

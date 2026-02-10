@@ -24,7 +24,7 @@ function verificarAutenticacionAdmin() {
     
     if (!usuario.correo || usuario.rol !== 'administrador') {
         // Redirigir al login si no es admin
-        window.location.href = '/auth/login';
+        window.location.href = '/admin/login';
         return;
     }
     

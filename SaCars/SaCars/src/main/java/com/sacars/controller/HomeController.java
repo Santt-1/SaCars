@@ -40,10 +40,4 @@ public class HomeController {
     public String masSobreNosotros() {
         return "mas-sobre-nosotros";
     }
-    
-    // Dashboard Cliente
-    @GetMapping("/cliente/dashboard")
-    public String clienteDashboard() {
-        return "cliente/dashboard";
-    }
 }

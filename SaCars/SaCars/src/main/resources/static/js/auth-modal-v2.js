@@ -43,7 +43,25 @@ $(document).ready(function () {
 
                     const u = response.data.usuario;
                     console.log("Usuario:", u);
+                    console.log("Rol del usuario:", u.rol);
+                    
+                    // VALIDACIÓN: Si es administrador, redirigir al login admin
+                    if (u.rol === 'administrador') {
+                        console.log("⚠️ Usuario administrador detectado");
+                        $("#login-error").html(
+                            '<span style="color: #ffc107;">Detectamos que eres administrador. ' +
+                            'Por favor usa el <a href="/admin/login" style="color: #ffc107; font-weight: bold; text-decoration: underline;">Panel Admin</a></span>'
+                        );
+                        
+                        // Redirigir automáticamente después de 2 segundos
+                        setTimeout(function() {
+                            window.location.href = "/admin/login";
+                        }, 2000);
+                        
+                        return; // No continuar con el login normal
+                    }
 
+                    // Solo continuar si es cliente
                     localStorage.setItem("token", response.data.token);
 
                     localStorage.setItem("usuario", JSON.stringify({
@@ -56,20 +74,11 @@ $(document).ready(function () {
                         rol: u.rol
                     }));
 
-                    // Redirección automática según el rol
+                    // Redirección para clientes - Van a la página principal
                     alert("Bienvenido " + u.nombre);
-                    console.log("Rol del usuario:", u.rol);
                     
-                    if (u.rol === 'administrador') {
-                        console.log("Redirigiendo a admin dashboard...");
-                        window.location.href = "/admin/dashboard";
-                    } else if (u.rol === 'cliente') {
-                        console.log("Redirigiendo a cliente dashboard...");
-                        window.location.href = "/cliente/dashboard";
-                    } else {
-                        console.log("Redirigiendo a home...");
-                        window.location.href = "/";
-                    }
+                    console.log("Cliente autenticado, redirigiendo a página principal...");
+                    window.location.href = "/";
 
                 } else {
                     $("#login-error").text(response.message);

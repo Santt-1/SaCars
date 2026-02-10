@@ -29,6 +29,15 @@ public class AdminDashboardController {
     private final UsuarioService usuarioService;
     
     /**
+     * Vista del login administrativo
+     * GET /admin/login
+     */
+    @GetMapping("/login")
+    public String mostrarLoginAdmin() {
+        return "admin/login";
+    }
+    
+    /**
      * Vista del dashboard administrativo
      * GET /admin/dashboard
      */

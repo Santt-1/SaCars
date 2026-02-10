@@ -320,20 +320,28 @@ function verificarAutenticacion() {
         try {
             const usuarioObj = JSON.parse(usuario);
             
-            // Mostrar nombre del usuario
-            $('#usuario-conectado').show();
-            $('#nombre-usuario').text(usuarioObj.nombre);
-            
-            // Mostrar botón logout
-            $('#btn-login').hide();
-            $('#btn-logout').show().off('click').click(function(e) {
-                e.preventDefault();
-                cerrarSesion();
-            });
-            // Hacer clic en el nombre de usuario redirija al perfil
-            $('#usuario-conectado').css('cursor', 'pointer').off('click').on('click', function() {
-              window.location.href = '/perfil';
-            });
+            // Solo mostrar como logueado si es CLIENTE
+            if (usuarioObj.rol === 'cliente') {
+                // Mostrar nombre del usuario
+                $('#usuario-conectado').show();
+                $('#nombre-usuario').text(usuarioObj.nombre);
+                
+                // Mostrar botón logout
+                $('#btn-login').hide();
+                $('#btn-logout').show().off('click').click(function(e) {
+                    e.preventDefault();
+                    cerrarSesion();
+                });
+                // Hacer clic en el nombre de usuario redirija al perfil
+                $('#usuario-conectado').css('cursor', 'pointer').off('click').on('click', function() {
+                  window.location.href = '/perfil';
+                });
+            } else {
+                // Si es administrador, no mostrar como logueado en la web
+                $('#usuario-conectado').hide();
+                $('#btn-logout').hide();
+                $('#btn-login').show();
+            }
         } catch (e) {
             console.error('Error al parsear usuario:', e);
             limpiarSesion();
@@ -400,19 +408,27 @@ function verificarAutenticacion() {
         try {
             const usuarioObj = JSON.parse(usuario);
             
-            // Mostrar nombre del usuario
-            $('#usuario-conectado').show();
-            $('#nombre-usuario').text(usuarioObj.nombre);
-            
-            // PROCESAR EL NOMBRE INMEDIATAMENTE DESPUÉS DE ASIGNARLO
-            setTimeout(mostrarPrimerNombre, 50);
-            
-            // Mostrar botón logout
-            $('#btn-login').hide();
-            $('#btn-logout').show().off('click').click(function(e) {
-                e.preventDefault();
-                cerrarSesion();
-            });
+            // Solo mostrar como logueado si es CLIENTE
+            if (usuarioObj.rol === 'cliente') {
+                // Mostrar nombre del usuario
+                $('#usuario-conectado').show();
+                $('#nombre-usuario').text(usuarioObj.nombre);
+                
+                // PROCESAR EL NOMBRE INMEDIATAMENTE DESPUÉS DE ASIGNARLO
+                setTimeout(mostrarPrimerNombre, 50);
+                
+                // Mostrar botón logout
+                $('#btn-login').hide();
+                $('#btn-logout').show().off('click').click(function(e) {
+                    e.preventDefault();
+                    cerrarSesion();
+                });
+            } else {
+                // Si es administrador, no mostrar como logueado en la web
+                $('#usuario-conectado').hide();
+                $('#btn-logout').hide();
+                $('#btn-login').show();
+            }
         } catch (e) {
             console.error('Error al parsear usuario:', e);
             limpiarSesion();

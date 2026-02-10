@@ -11,38 +11,40 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <!-- Sidebar -->
-        <aside class="sidebar-admin">
+        <!-- Sidebar Admin -->
+        <aside class="sidebar sidebar-admin">
             <div class="sidebar-header">
+                <img src="../img/logoprincipal.png" alt="Logo SaCars">
                 <h2>SaCars Admin</h2>
             </div>
+
             <nav class="sidebar-nav">
-                <a th:href="@{/admin/dashboard}" class="nav-link">
-                    <span class="icon">📊</span>
-                    Dashboard
+                <a href="/admin/dashboard" class="nav-item">
+                    <span class="icon">📊</span> <span>Dashboard</span>
                 </a>
-                <a th:href="@{/admin/usuarios}" class="nav-link">
-                    <span class="icon">👥</span>
-                    Usuarios
+                <a href="/admin/productos" class="nav-item">
+                    <span class="icon">📦</span> <span>Productos</span>
                 </a>
-                <a th:href="@{/admin/productos}" class="nav-link">
-                    <span class="icon">🛒</span>
-                    Productos
+                <a href="/admin/pedidos" class="nav-item">
+                    <span class="icon">🛒</span> <span>Pedidos</span>
                 </a>
-                <a th:href="@{/admin/pedidos}" class="nav-link">
-                    <span class="icon">📦</span>
-                    Pedidos
+                <a href="/admin/usuarios" class="nav-item">
+                    <span class="icon">👥</span> <span>Usuarios</span>
                 </a>
-                <a th:href="@{/admin/categorias}" class="nav-link active">
-                    <span class="icon">📁</span>
-                    Categorías
+                <a href="/admin/reportes" class="nav-item">
+                    <span class="icon">📈</span> <span>Reportes</span>
                 </a>
-                <a th:href="@{/admin/reportes}" class="nav-link">
-                    <span class="icon">📈</span>
-                    Reportes
+                <a href="/admin/categorias" class="nav-item active">
+                    <span class="icon">🏷️</span> <span>Categorías</span>
                 </a>
-                <a th:href="@{/logout}" class="nav-link logout">
-                    <span class="icon">🚪</span>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="cerrarSesionAdmin()">
+                    <span class="icon">🚪</span> Cerrar Sesión
+                </button>
+            </div>
+        </aside>
                     Salir
                 </a>
             </nav>

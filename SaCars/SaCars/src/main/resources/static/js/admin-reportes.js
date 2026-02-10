@@ -24,7 +24,7 @@ function verificarAutenticacionAdmin() {
     const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
     
     if (!usuario.correo || usuario.rol !== 'administrador') {
-        window.location.href = '/auth/login';
+        window.location.href = '/admin/login';
         return;
     }
     
