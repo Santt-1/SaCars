@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 31-01-2026 a las 13:56:06
+-- Tiempo de generación: 09-02-2026 a las 16:24:33
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -118,7 +118,8 @@ INSERT INTO `detalle_pedido` (`id_detalle`, `id_pedido`, `id_producto`, `cantida
 (21, 15, 4, 1, 20.00, 20.00),
 (22, 15, 5, 1, 15.00, 15.00),
 (23, 16, 4, 1, 20.00, 20.00),
-(24, 17, 8, 1, 20.00, 20.00);
+(24, 17, 8, 1, 20.00, 20.00),
+(25, 18, 6, 1, 15.00, 15.00);
 
 -- --------------------------------------------------------
 
@@ -161,7 +162,8 @@ INSERT INTO `factura` (`id_factura`, `id_pedido`, `numero_factura`, `fecha_emisi
 (14, 14, 'B001-000014', '2025-12-01 23:50:42', 'Pita Pen', '71273737', 42.00, 52.00, 'SaCars', '00000000000', 'Tarapoto - Perú'),
 (15, 15, 'B001-000015', '2025-12-02 00:06:06', 'Pita Pen', '71273737', 35.00, 45.00, 'SaCars', '00000000000', 'Tarapoto - Perú'),
 (16, 16, 'B001-000016', '2025-12-02 00:10:04', 'Josesitox pinedo', '72129871', 20.00, 25.00, 'SaCars', '00000000000', 'Tarapoto - Perú'),
-(17, 17, 'B001-000017', '2025-12-02 00:21:05', 'Josesitox pinedo', '72129871', 20.00, 25.00, 'SaCars', '00000000000', 'Tarapoto - Perú');
+(17, 17, 'B001-000017', '2025-12-02 00:21:05', 'Josesitox pinedo', '72129871', 20.00, 25.00, 'SaCars', '00000000000', 'Tarapoto - Perú'),
+(18, 18, 'B001-000018', '2026-01-31 14:45:06', 'Jordy Adriel Ponce', '23434432', 15.00, 25.00, 'SaCars', '00000000000', 'Tarapoto - Perú');
 
 -- --------------------------------------------------------
 
@@ -202,7 +204,8 @@ INSERT INTO `pedidos` (`id_pedido`, `id_usuario`, `fecha_pedido`, `estado`, `dir
 (14, 13, '2025-12-02 04:50:42', 'PENDIENTE', 'jr juan vargas 1234', 'Morales', '22001', 52.00, 'Contra entrega'),
 (15, 13, '2025-12-02 05:06:06', 'PENDIENTE', 'jr los marios 9999', 'Morales', '22001', 45.00, 'Contra entrega'),
 (16, 14, '2025-12-02 05:10:04', 'PENDIENTE', 'jr mmmmm', 'Banda de Shilcayo', '22003', 25.00, 'Contra entrega'),
-(17, 14, '2025-12-02 05:21:05', 'PENDIENTE', 'jr pablito grandez', 'Banda de Shilcayo', '22003', 25.00, 'Contra entrega');
+(17, 14, '2025-12-02 05:21:05', 'PENDIENTE', 'jr pablito grandez', 'Banda de Shilcayo', '22003', 25.00, 'Contra entrega'),
+(18, 16, '2026-01-31 19:45:06', 'PENDIENTE', 'jr peru 111', 'Morales', '22001', 25.00, 'Contra entrega');
 
 -- --------------------------------------------------------
 
@@ -370,19 +373,19 @@ ALTER TABLE `contactos`
 -- AUTO_INCREMENT de la tabla `detalle_pedido`
 --
 ALTER TABLE `detalle_pedido`
-  MODIFY `id_detalle` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id_detalle` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT de la tabla `factura`
 --
 ALTER TABLE `factura`
-  MODIFY `id_factura` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id_factura` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
