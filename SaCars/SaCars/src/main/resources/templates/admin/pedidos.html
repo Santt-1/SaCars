@@ -45,10 +45,6 @@
                 </button>
             </div>
         </aside>
-                    Salir
-                </a>
-            </nav>
-        </aside>
 
         <!-- Contenido Principal -->
         <main class="main-content">
@@ -61,22 +57,25 @@
 
             <!-- Filtros -->
             <div class="filtros-section">
-                <div style="display: flex; gap: 15px; flex: 1;">
+                <div style="display: flex; gap: 15px; flex: 1; flex-wrap: wrap;">
+                    <div class="form-group" style="margin: 0; min-width: 250px;">
+                        <input type="text" id="buscarCliente" placeholder="🔍 Buscar por nombre de cliente..." 
+                               style="padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; width: 100%;">
+                    </div>
                     <div class="form-group" style="margin: 0; min-width: 200px;">
                         <select id="filtroEstado" style="padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px;">
                             <option value="">📋 Todos los estados</option>
-                            <option value="pendiente">⏳ Pendiente</option>
-                            <option value="completado">✅ Completado</option>
-                            <option value="cancelado">❌ Cancelado</option>
+                            <option value="PENDIENTE">⏳ Pendiente</option>
+                            <option value="COMPLETADO">✅ Completado</option>
+                            <option value="CANCELADO">❌ Cancelado</option>
                         </select>
                     </div>
                     <div class="form-group" style="margin: 0; min-width: 200px;">
                         <select id="filtroZona" style="padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px;">
                             <option value="">📍 Todas las zonas</option>
-                            <option value="Lima Norte">Lima Norte</option>
-                            <option value="Lima Sur">Lima Sur</option>
-                            <option value="Lima Este">Lima Este</option>
-                            <option value="Lima Centro">Lima Centro</option>
+                            <option value="Banda de Shilcayo">Banda de Shilcayo</option>
+                            <option value="Tarapoto">Tarapoto</option>
+                            <option value="Morales">Morales</option>
                         </select>
                     </div>
                 </div>
@@ -135,63 +134,63 @@
 
     <!-- Modal Detalle del Pedido -->
     <div id="modalDetallePedido" class="modal">
-        <div class="modal-content" style="max-width: 900px;">
+        <div class="modal-content" style="max-width: 900px; background: #fff;">
             <div class="modal-header">
                 <h2>Detalle del Pedido <span id="numeroPedido"></span></h2>
                 <span class="close" onclick="cerrarModal()">&times;</span>
             </div>
-            <div style="padding: 25px;">
+            <div style="padding: 25px; color: #333;">
                 <!-- Información del cliente -->
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                    <h3 style="margin: 0 0 15px 0; color: #1a1a2e;">👤 Información del Cliente</h3>
+                <div style="background: #f0f4f8; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #e0e5ec;">
+                    <h3 style="margin: 0 0 15px 0; color: #1a1a2e; font-size: 18px;">👤 Información del Cliente</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div>
-                            <strong>Nombre:</strong> <span id="clienteNombre"></span>
+                        <div style="padding: 8px 0;">
+                            <strong style="color: #555;">Nombre:</strong> <span id="clienteNombre" style="color: #1a1a2e; font-weight: 500;"></span>
                         </div>
-                        <div>
-                            <strong>Email:</strong> <span id="clienteEmail"></span>
+                        <div style="padding: 8px 0;">
+                            <strong style="color: #555;">Email:</strong> <span id="clienteEmail" style="color: #1a1a2e;"></span>
                         </div>
-                        <div>
-                            <strong>Teléfono:</strong> <span id="clienteTelefono"></span>
+                        <div style="padding: 8px 0;">
+                            <strong style="color: #555;">Teléfono:</strong> <span id="clienteTelefono" style="color: #1a1a2e;"></span>
                         </div>
-                        <div>
-                            <strong>Dirección:</strong> <span id="clienteDireccion"></span>
+                        <div style="padding: 8px 0;">
+                            <strong style="color: #555;">Dirección:</strong> <span id="clienteDireccion" style="color: #1a1a2e;"></span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Información del pedido -->
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                    <h3 style="margin: 0 0 15px 0; color: #1a1a2e;">📦 Información del Pedido</h3>
+                <div style="background: #fff8e6; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #f5e6c8;">
+                    <h3 style="margin: 0 0 15px 0; color: #1a1a2e; font-size: 18px;">📦 Información del Pedido</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div>
-                            <strong>Fecha:</strong> <span id="pedidoFecha"></span>
+                        <div style="padding: 8px 0;">
+                            <strong style="color: #555;">Fecha:</strong> <span id="pedidoFecha" style="color: #1a1a2e;"></span>
                         </div>
-                        <div>
-                            <strong>Estado:</strong> <span id="pedidoEstado"></span>
+                        <div style="padding: 8px 0;">
+                            <strong style="color: #555;">Estado:</strong> <span id="pedidoEstado"></span>
                         </div>
-                        <div>
-                            <strong>Zona:</strong> <span id="pedidoZona"></span>
+                        <div style="padding: 8px 0;">
+                            <strong style="color: #555;">Zona:</strong> <span id="pedidoZona" style="color: #1a1a2e; font-weight: 500;"></span>
                         </div>
-                        <div>
-                            <strong>Total:</strong> <span id="pedidoTotal" style="font-size: 18px; color: #27ae60;"></span>
+                        <div style="padding: 8px 0;">
+                            <strong style="color: #555;">Total:</strong> <span id="pedidoTotal" style="font-size: 20px; color: #27ae60; font-weight: 700;"></span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Productos del pedido -->
-                <div>
-                    <h3 style="margin: 0 0 15px 0; color: #1a1a2e;">🛒 Productos</h3>
-                    <table style="width: 100%;">
+                <div style="background: #fff; border-radius: 10px; border: 1px solid #e0e5ec; overflow: hidden;">
+                    <h3 style="margin: 0; padding: 15px 20px; color: #1a1a2e; font-size: 18px; background: #f8f9fa; border-bottom: 1px solid #e0e5ec;">🛒 Productos</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
                         <thead>
-                            <tr style="background: #f8f9fa;">
-                                <th style="padding: 12px; text-align: left;">Producto</th>
-                                <th style="padding: 12px; text-align: center;">Cantidad</th>
-                                <th style="padding: 12px; text-align: right;">Precio Unit.</th>
-                                <th style="padding: 12px; text-align: right;">Subtotal</th>
+                            <tr style="background: #1a1a2e;">
+                                <th style="padding: 14px 12px; text-align: left; color: #fff; font-weight: 600;">Producto</th>
+                                <th style="padding: 14px 12px; text-align: center; color: #fff; font-weight: 600;">Cantidad</th>
+                                <th style="padding: 14px 12px; text-align: right; color: #fff; font-weight: 600;">Precio Unit.</th>
+                                <th style="padding: 14px 12px; text-align: right; color: #fff; font-weight: 600;">Subtotal</th>
                             </tr>
                         </thead>
-                        <tbody id="productosDetalle">
+                        <tbody id="productosDetalle" style="color: #333;">
                         </tbody>
                     </table>
                 </div>

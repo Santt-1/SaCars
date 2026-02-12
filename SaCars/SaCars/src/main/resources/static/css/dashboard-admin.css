@@ -150,7 +150,7 @@
 }
 
 .stat-card {
-    background: white;
+    background: rgba(30, 29, 29, 0.232);
     padding: 25px;
     border-radius: 10px;
     display: flex;
@@ -163,7 +163,7 @@
 
 .stat-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 5px 20px rgba(137, 133, 133, 0.12);
 }
 
 .stat-icon {

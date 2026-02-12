@@ -16,6 +16,7 @@ $(document).ready(function() {
     // APLICAR FILTROS
     function aplicarFiltros() {
         const textoBusqueda = $('#buscar-producto').val().toLowerCase();
+        const filtroCategoria = $('#filtro-categoria').val();
         const filtroPrecio = $('#filtro-precio').val();
         const ordenamiento = $('#ordenar-por').val();           
         // Empezar con TODOS los productos originales
@@ -26,6 +27,14 @@ $(document).ready(function() {
             productosFiltrados = $(productosFiltrados).filter(function() {
                 const nombre = $(this).data('nombre').toLowerCase();
                 return nombre.includes(textoBusqueda);
+            }).toArray();
+        }
+        
+        // FILTRAR POR CATEGORÍA
+        if (filtroCategoria !== 'todos') {
+            productosFiltrados = $(productosFiltrados).filter(function() {
+                const categoria = $(this).data('categoria');
+                return categoria == filtroCategoria;
             }).toArray();
         }
         
@@ -115,6 +124,11 @@ $(document).ready(function() {
         aplicarFiltros();
     });
     
+    // Filtro de categoría
+    $('#filtro-categoria').on('change', function() {
+        aplicarFiltros();
+    });
+    
     // Filtro de precio
     $('#filtro-precio').on('change', function() {
         aplicarFiltros();
@@ -128,6 +142,7 @@ $(document).ready(function() {
     // Limpiar filtros
     $('#limpiar-filtros').on('click', function() {
         $('#buscar-producto').val('');
+        $('#filtro-categoria').val('todos');
         $('#filtro-precio').val('todos');
         $('#ordenar-por').val('default');
         aplicarFiltros();
@@ -136,6 +151,7 @@ $(document).ready(function() {
     // También mantener el botón de "sin resultados"
     $('#reset-busqueda').on('click', function() {
         $('#buscar-producto').val('');
+        $('#filtro-categoria').val('todos');
         $('#filtro-precio').val('todos');
         $('#ordenar-por').val('default');
         aplicarFiltros();

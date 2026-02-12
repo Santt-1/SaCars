@@ -1,4 +1,5 @@
 package com.sacars.model;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -26,8 +27,9 @@ public class Producto {
 
     @Column(name = "id_categoria")
     private Long idCategoria;
-
-    private Boolean destacado;
+    
+    @Transient
+    private String categoriaNombre;
 
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
@@ -38,6 +40,13 @@ public class Producto {
     public Long getId() {
         return id;
     }
+    
+    // Alias para que JSON serialice como idProducto
+    @JsonProperty("idProducto")
+    public Long getIdProducto() {
+        return id;
+    }
+    
     public void setId(Long id) {
         this.id = id;
     }
@@ -77,11 +86,11 @@ public class Producto {
     public void setIdCategoria(Long idCategoria) {
         this.idCategoria = idCategoria;
     }
-    public Boolean getDestacado() {
-        return destacado;
+    public String getCategoriaNombre() {
+        return categoriaNombre;
     }
-    public void setDestacado(Boolean destacado) {
-        this.destacado = destacado;
+    public void setCategoriaNombre(String categoriaNombre) {
+        this.categoriaNombre = categoriaNombre;
     }
     public LocalDateTime getFechaCreacion() {
         return fechaCreacion;

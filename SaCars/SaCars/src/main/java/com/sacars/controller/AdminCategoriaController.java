@@ -1,6 +1,7 @@
 package com.sacars.controller;
 
 import com.sacars.dto.CategoriaFormDTO;
+import com.sacars.dto.CategoriaResponseDTO;
 import com.sacars.model.Categoria;
 import com.sacars.service.AdminCategoriaService;
 import jakarta.validation.Valid;
@@ -41,9 +42,9 @@ public class AdminCategoriaController {
      */
     @GetMapping("/api/listar")
     @ResponseBody
-    public ResponseEntity<List<Categoria>> listarCategorias() {
+    public ResponseEntity<List<CategoriaResponseDTO>> listarCategorias() {
         try {
-            List<Categoria> categorias = categoriaService.listarTodas();
+            List<CategoriaResponseDTO> categorias = categoriaService.listarTodasConProductos();
             return ResponseEntity.ok(categorias);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();

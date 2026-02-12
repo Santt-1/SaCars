@@ -79,6 +79,138 @@
     overflow-x: auto;
 }
 
+.tabla-section table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 800px;
+}
+
+.tabla-section thead {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.tabla-section thead tr th:first-child {
+    border-top-left-radius: 8px;
+}
+
+.tabla-section thead tr th:last-child {
+    border-top-right-radius: 8px;
+}
+
+.tabla-section th {
+    padding: 18px 20px;
+    text-align: left;
+    font-weight: 700;
+    color: white;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    border-bottom: 3px solid #ffc107;
+}
+
+.tabla-section td {
+    padding: 18px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    color: #333;
+    vertical-align: middle;
+    background: white;
+}
+
+.tabla-section tbody tr {
+    transition: all 0.2s ease;
+}
+
+.tabla-section tbody tr:hover {
+    background: #f8f9fa !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transform: scale(1.01);
+}
+
+.tabla-section tbody tr:hover td {
+    background: #f8f9fa;
+}
+
+.tabla-section tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 8px;
+}
+
+.tabla-section tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 8px;
+}
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-info {
+    background: #3498db;
+    color: white;
+}
+
+.badge-secondary {
+    background: #95a5a6;
+    color: white;
+}
+
+.badge-success {
+    background: #27ae60;
+    color: white;
+}
+
+.badge-warning {
+    background: #f39c12;
+    color: white;
+}
+
+/* Botones de acción en tabla */
+.btn-action {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.3s;
+    margin: 0 3px;
+}
+
+.btn-edit {
+    color: #3498db;
+}
+
+.btn-edit:hover {
+    background: #e3f2fd;
+    transform: scale(1.1);
+}
+
+.btn-delete {
+    color: #e74c3c;
+}
+
+.btn-delete:hover {
+    background: #ffebee;
+    transform: scale(1.1);
+}
+
+.btn-disabled {
+    color: #bdc3c7;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.btn-disabled:hover {
+    background: transparent;
+    transform: none;
+}
+
 /* Modal */
 .modal {
     display: none;

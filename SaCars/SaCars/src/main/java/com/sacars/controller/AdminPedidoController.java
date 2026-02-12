@@ -1,5 +1,6 @@
 package com.sacars.controller;
 
+import com.sacars.dto.PedidoResponseDTO;
 import com.sacars.model.Pedido;
 import com.sacars.service.AdminPedidoService;
 import lombok.RequiredArgsConstructor;
@@ -40,9 +41,9 @@ public class AdminPedidoController {
      */
     @GetMapping("/api/listar")
     @ResponseBody
-    public ResponseEntity<List<Pedido>> listarPedidos() {
+    public ResponseEntity<List<PedidoResponseDTO>> listarPedidos() {
         try {
-            List<Pedido> pedidos = pedidoService.listarTodos();
+            List<PedidoResponseDTO> pedidos = pedidoService.listarTodosDTO();
             return ResponseEntity.ok(pedidos);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
@@ -72,7 +73,7 @@ public class AdminPedidoController {
     @ResponseBody
     public ResponseEntity<?> obtenerPedido(@PathVariable Long id) {
         try {
-            return pedidoService.buscarPorId(id)
+            return pedidoService.buscarPorIdDTO(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
@@ -86,9 +87,9 @@ public class AdminPedidoController {
      */
     @GetMapping("/api/estado/{estado}")
     @ResponseBody
-    public ResponseEntity<List<Pedido>> listarPorEstado(@PathVariable String estado) {
+    public ResponseEntity<List<PedidoResponseDTO>> listarPorEstado(@PathVariable String estado) {
         try {
-            List<Pedido> pedidos = pedidoService.listarPorEstado(estado.toUpperCase());
+            List<PedidoResponseDTO> pedidos = pedidoService.listarPorEstadoDTO(estado.toUpperCase());
             return ResponseEntity.ok(pedidos);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
@@ -146,9 +147,9 @@ public class AdminPedidoController {
      */
     @GetMapping("/api/buscar")
     @ResponseBody
-    public ResponseEntity<List<Pedido>> buscarPorCliente(@RequestParam(required = false) String q) {
+    public ResponseEntity<List<PedidoResponseDTO>> buscarPorCliente(@RequestParam(required = false) String q) {
         try {
-            List<Pedido> pedidos = pedidoService.buscarPorCliente(q);
+            List<PedidoResponseDTO> pedidos = pedidoService.buscarPorClienteDTO(q);
             return ResponseEntity.ok(pedidos);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();

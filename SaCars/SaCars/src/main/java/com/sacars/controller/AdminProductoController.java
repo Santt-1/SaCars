@@ -113,12 +113,12 @@ public class AdminProductoController {
     
     /**
      * API: Obtener productos con stock bajo
-     * GET /admin/productos/api/stock-bajo?cantidad=10
+     * GET /admin/productos/api/stock-bajo?cantidad=3
      */
     @GetMapping("/api/stock-bajo")
     @ResponseBody
     public ResponseEntity<List<Producto>> obtenerStockBajo(
-        @RequestParam(defaultValue = "10") Integer cantidad
+        @RequestParam(defaultValue = "3") Integer cantidad
     ) {
         try {
             List<Producto> productos = productoService.obtenerProductosStockBajo(cantidad);

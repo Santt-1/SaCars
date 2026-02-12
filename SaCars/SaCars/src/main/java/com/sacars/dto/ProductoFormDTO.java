@@ -37,7 +37,5 @@ public class ProductoFormDTO {
     @Size(max = 255, message = "La URL de imagen no puede exceder 255 caracteres")
     private String imagenUrl;
     
-    private Boolean destacado = false;
-    
     private Boolean activo = true;
 }

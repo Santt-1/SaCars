@@ -62,10 +62,10 @@
             <!-- Filtros y Búsqueda -->
             <div class="filtros-section">
                 <div class="search-box">
-                    <input type="text" id="buscarCategoria" placeholder="🔍 Buscar por nombre...">
+                    <input type="text" id="buscarCategoria" placeholder="🔍 Buscar categoría por nombre...">
                 </div>
                 <button class="btn-primary" id="btnNuevaCategoria">
-                    + Nueva Categoría
+                    ➕ Nueva Categoría
                 </button>
             </div>
 
@@ -74,17 +74,17 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Imagen</th>
-                            <th>Nombre</th>
+                            <th style="width: 80px;">ID</th>
+                            <th style="width: 120px;">Imagen</th>
+                            <th style="width: 200px;">Nombre</th>
                             <th>Descripción</th>
-                            <th>Productos</th>
-                            <th>Acciones</th>
+                            <th style="width: 120px; text-align: center;">Productos</th>
+                            <th style="width: 140px; text-align: center;">Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="tablaCategorias">
                         <tr>
-                            <td colspan="6" class="loading">Cargando categorías...</td>
+                            <td colspan="6" class="loading" style="text-align: center; padding: 30px;">Cargando categorías...</td>
                         </tr>
                     </tbody>
                 </table>

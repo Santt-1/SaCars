@@ -31,6 +31,9 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     // Buscar pedidos recientes (ordenados por fecha descendente)
     List<Pedido> findTop10ByOrderByFechaPedidoDesc();
     
+    // Obtener todos los pedidos ordenados por fecha descendente
+    List<Pedido> findAllByOrderByFechaPedidoDesc();
+    
     // Calcular total de ventas por período
     @Query("SELECT COALESCE(SUM(p.total), 0) FROM Pedido p " +
            "WHERE p.estado = 'COMPLETADO' " +

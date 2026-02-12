@@ -1,7 +1,9 @@
 package com.sacars.service;
 
 import com.sacars.dto.ProductoFormDTO;
+import com.sacars.model.Categoria;
 import com.sacars.model.Producto;
+import com.sacars.repository.CategoriaRepository;
 import com.sacars.repository.ProductoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,7 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Servicio para CRUD de Productos (RQ1.8)
@@ -21,13 +25,40 @@ import java.util.Optional;
 public class AdminProductoService {
     
     private final ProductoRepository productoRepository;
+    private final CategoriaRepository categoriaRepository;
+    
+    /**
+     * Cargar nombres de categorías en los productos
+     */
+    private void cargarNombresCategorias(List<Producto> productos) {
+        // Obtener todas las categorías de los productos
+        List<Long> idsCategorias = productos.stream()
+                .map(Producto::getIdCategoria)
+                .filter(id -> id != null)
+                .distinct()
+                .collect(Collectors.toList());
+        
+        if (!idsCategorias.isEmpty()) {
+            Map<Long, String> nombresCategorias = categoriaRepository.findAllById(idsCategorias)
+                    .stream()
+                    .collect(Collectors.toMap(Categoria::getIdCategoria, Categoria::getNombre));
+            
+            productos.forEach(p -> {
+                if (p.getIdCategoria() != null) {
+                    p.setCategoriaNombre(nombresCategorias.get(p.getIdCategoria()));
+                }
+            });
+        }
+    }
     
     /**
      * Listar todos los productos (activos e inactivos)
      */
     @Transactional(readOnly = true)
     public List<Producto> listarTodos() {
-        return productoRepository.findAll();
+        List<Producto> productos = productoRepository.findAll();
+        cargarNombresCategorias(productos);
+        return productos;
     }
     
     /**
@@ -35,7 +66,9 @@ public class AdminProductoService {
      */
     @Transactional(readOnly = true)
     public List<Producto> listarActivos() {
-        return productoRepository.findByActivo(true);
+        List<Producto> productos = productoRepository.findByActivo(true);
+        cargarNombresCategorias(productos);
+        return productos;
     }
     
     /**
@@ -43,7 +76,9 @@ public class AdminProductoService {
      */
     @Transactional(readOnly = true)
     public List<Producto> listarPorCategoria(Long idCategoria) {
-        return productoRepository.findByIdCategoria(idCategoria);
+        List<Producto> productos = productoRepository.findByIdCategoria(idCategoria);
+        cargarNombresCategorias(productos);
+        return productos;
     }
     
     /**
@@ -59,10 +94,14 @@ public class AdminProductoService {
      */
     @Transactional(readOnly = true)
     public List<Producto> buscarProductos(String busqueda) {
+        List<Producto> productos;
         if (busqueda == null || busqueda.trim().isEmpty()) {
-            return listarTodos();
+            productos = productoRepository.findAll();
+        } else {
+            productos = productoRepository.buscarProductos(busqueda.trim());
         }
-        return productoRepository.buscarProductos(busqueda.trim());
+        cargarNombresCategorias(productos);
+        return productos;
     }
     
     /**
@@ -70,7 +109,9 @@ public class AdminProductoService {
      */
     @Transactional(readOnly = true)
     public List<Producto> obtenerProductosStockBajo(Integer cantidad) {
-        return productoRepository.findProductosStockBajo(cantidad);
+        List<Producto> productos = productoRepository.findProductosStockBajo(cantidad);
+        cargarNombresCategorias(productos);
+        return productos;
     }
     
     /**
@@ -92,7 +133,6 @@ public class AdminProductoService {
         producto.setStock(dto.getStock());
         producto.setIdCategoria(dto.getIdCategoria());
         producto.setImagenUrl(dto.getImagenUrl());
-        producto.setDestacado(dto.getDestacado());
         producto.setActivo(dto.getActivo());
         producto.setFechaCreacion(LocalDateTime.now());
         
@@ -113,7 +153,6 @@ public class AdminProductoService {
         producto.setStock(dto.getStock());
         producto.setIdCategoria(dto.getIdCategoria());
         producto.setImagenUrl(dto.getImagenUrl());
-        producto.setDestacado(dto.getDestacado());
         producto.setActivo(dto.getActivo());
         // NO modificamos fechaCreacion
         
@@ -199,7 +238,7 @@ public class AdminProductoService {
         Long totalProductos = productoRepository.count();
         Long productosActivos = productoRepository.countByActivo(true);
         Long totalUnidadesStock = productoRepository.sumTotalStock();
-        Integer productosStockBajo = productoRepository.findProductosStockBajo(10).size();
+        Integer productosStockBajo = productoRepository.findProductosStockBajo(3).size();
         Integer productosSinStock = productoRepository.findProductosSinStock().size();
         
         return new InventarioStats(

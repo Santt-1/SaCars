@@ -1,8 +1,12 @@
 // auth-admin-login.js - Login exclusivo para administradores
 const API_URL = "http://localhost:8082/api";
 
+console.log("📄 Archivo auth-admin-login.js cargado");
+console.log("🔗 API_URL:", API_URL);
+
 jQuery(document).ready(function ($) {
-    console.log("✅ Auth Admin Login cargado");
+    console.log("✅ jQuery ready - Auth Admin Login cargado");
+    console.log("📝 Formulario encontrado:", $("#admin-login-form").length > 0 ? "SÍ" : "NO");
 
     // Verificar si ya hay sesión activa de admin
     const usuarioActual = localStorage.getItem("usuario");
@@ -23,9 +27,11 @@ jQuery(document).ready(function ($) {
     // ---------------------------
     // LOGIN ADMIN
     // ---------------------------
-    $("#admin-login-form").submit(function (e) {
+    $("#admin-login-form").on("submit", function (e) {
         e.preventDefault();
+        e.stopPropagation();
         console.log("🔐 Iniciando login admin...");
+        console.log("✅ preventDefault ejecutado correctamente");
 
         const email = $("#admin-email").val().trim();
         const password = $("#admin-password").val();

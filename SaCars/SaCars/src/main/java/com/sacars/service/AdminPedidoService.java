@@ -1,7 +1,11 @@
 package com.sacars.service;
 
+import com.sacars.dto.PedidoResponseDTO;
+import com.sacars.model.DetallePedido;
 import com.sacars.model.Pedido;
+import com.sacars.model.Producto;
 import com.sacars.repository.PedidoRepository;
+import com.sacars.repository.ProductoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Servicio para Gestión de Pedidos (RQ1.8)
@@ -21,6 +26,7 @@ import java.util.Optional;
 public class AdminPedidoService {
     
     private final PedidoRepository pedidoRepository;
+    private final ProductoRepository productoRepository;
     
     /**
      * Listar todos los pedidos
@@ -28,6 +34,16 @@ public class AdminPedidoService {
     @Transactional(readOnly = true)
     public List<Pedido> listarTodos() {
         return pedidoRepository.findAll();
+    }
+    
+    /**
+     * Listar todos los pedidos como DTO (con datos del cliente)
+     */
+    @Transactional(readOnly = true)
+    public List<PedidoResponseDTO> listarTodosDTO() {
+        return pedidoRepository.findAllByOrderByFechaPedidoDesc().stream()
+                .map(PedidoResponseDTO::fromPedido)
+                .collect(Collectors.toList());
     }
     
     /**
@@ -91,6 +107,37 @@ public class AdminPedidoService {
     }
     
     /**
+     * Buscar pedidos por información del cliente como DTO
+     */
+    @Transactional(readOnly = true)
+    public List<PedidoResponseDTO> buscarPorClienteDTO(String busqueda) {
+        if (busqueda == null || busqueda.trim().isEmpty()) {
+            return listarTodosDTO();
+        }
+        return pedidoRepository.buscarPedidosPorCliente(busqueda.trim()).stream()
+                .map(PedidoResponseDTO::fromPedido)
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Listar pedidos por estado como DTO
+     */
+    @Transactional(readOnly = true)
+    public List<PedidoResponseDTO> listarPorEstadoDTO(String estado) {
+        return pedidoRepository.findByEstado(estado).stream()
+                .map(PedidoResponseDTO::fromPedido)
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Buscar pedido por ID como DTO
+     */
+    @Transactional(readOnly = true)
+    public Optional<PedidoResponseDTO> buscarPorIdDTO(Long id) {
+        return pedidoRepository.findById(id).map(PedidoResponseDTO::fromPedido);
+    }
+
+    /**
      * Buscar pedidos por rango de fechas
      */
     @Transactional(readOnly = true)
@@ -101,10 +148,26 @@ public class AdminPedidoService {
     /**
      * Cambiar estado de pedido a COMPLETADO
      * El administrador marca como completado cuando el pedido fue entregado
+     * También reduce el stock de los productos vendidos
      */
     public Pedido marcarComoCompletado(Long id) {
         Pedido pedido = pedidoRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Pedido no encontrado"));
+        
+        // Solo reducir stock si el pedido pasa de PENDIENTE a COMPLETADO
+        if ("PENDIENTE".equals(pedido.getEstado())) {
+            // Reducir stock de cada producto en el pedido
+            if (pedido.getDetalles() != null) {
+                for (DetallePedido detalle : pedido.getDetalles()) {
+                    Producto producto = detalle.getProducto();
+                    if (producto != null) {
+                        int nuevoStock = producto.getStock() - detalle.getCantidad();
+                        producto.setStock(Math.max(0, nuevoStock)); // No permitir stock negativo
+                        productoRepository.save(producto);
+                    }
+                }
+            }
+        }
         
         pedido.setEstado("COMPLETADO");
         return pedidoRepository.save(pedido);

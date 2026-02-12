@@ -83,7 +83,17 @@ $(document).ready(function () {
   // Agregar producto al carrito
   function agregarAlCarrito(producto) {
     let carrito = JSON.parse(localStorage.getItem("carrito"));
-    carrito.push(producto);
+    
+    // Verificar si el producto ya existe en el carrito
+    const productoExistente = carrito.find(p => p.id === producto.id);
+    if (productoExistente) {
+      // Incrementar cantidad del existente
+      productoExistente.cantidad = (productoExistente.cantidad || 1) + (producto.cantidad || 1);
+    } else {
+      // Agregar como nuevo
+      carrito.push(producto);
+    }
+    
     localStorage.setItem("carrito", JSON.stringify(carrito));
   }
 
@@ -91,6 +101,9 @@ $(document).ready(function () {
   $(document).on("click", ".boton-agregar", function () {
     // VERIFICAR AUTENTICACIÓN PRIMERO
     if (!verificarYRedirigir()) return;
+
+    // Obtener cantidad seleccionada
+    const cantidad = parseInt($("#cantidad-producto").val()) || 1;
 
     // Verificar si ya hay una zona de envío seleccionada
     const zonaEnvio = localStorage.getItem("zonaEnvio");
@@ -102,9 +115,10 @@ $(document).ready(function () {
         titulo: $("#modal-titulo").text(),
         precio: parseFloat($("#modal-precio").text().replace("S/", "").trim()),
         imagen: $("#modal-img").attr("src"),
+        cantidad: cantidad
       };
       agregarAlCarrito(producto);
-      mostrarAviso("✅ Producto agregado al carrito");
+      mostrarAviso("✅ " + cantidad + " producto(s) agregado(s) al carrito");
     } else {
       // Si no hay zona, guardar producto temporal y abrir modal de envío
       productoTemporal = {
@@ -112,6 +126,7 @@ $(document).ready(function () {
         titulo: $("#modal-titulo").text(),
         precio: parseFloat($("#modal-precio").text().replace("S/", "").trim()),
         imagen: $("#modal-img").attr("src"),
+        cantidad: cantidad
       };
       
       // Cerrar modal de producto y abrir modal de envío

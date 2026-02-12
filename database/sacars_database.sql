@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 09-02-2026 a las 16:24:33
+-- Tiempo de generación: 12-02-2026 a las 15:27:04
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -205,7 +205,7 @@ INSERT INTO `pedidos` (`id_pedido`, `id_usuario`, `fecha_pedido`, `estado`, `dir
 (15, 13, '2025-12-02 05:06:06', 'PENDIENTE', 'jr los marios 9999', 'Morales', '22001', 45.00, 'Contra entrega'),
 (16, 14, '2025-12-02 05:10:04', 'PENDIENTE', 'jr mmmmm', 'Banda de Shilcayo', '22003', 25.00, 'Contra entrega'),
 (17, 14, '2025-12-02 05:21:05', 'PENDIENTE', 'jr pablito grandez', 'Banda de Shilcayo', '22003', 25.00, 'Contra entrega'),
-(18, 16, '2026-01-31 19:45:06', 'PENDIENTE', 'jr peru 111', 'Morales', '22001', 25.00, 'Contra entrega');
+(18, 16, '2026-01-31 19:45:06', 'COMPLETADO', 'jr peru 111', 'Morales', '22001', 25.00, 'Contra entrega');
 
 -- --------------------------------------------------------
 
@@ -231,24 +231,24 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`id_producto`, `nombre`, `descripcion`, `precio`, `stock`, `imagen_url`, `id_categoria`, `destacado`, `fecha_creacion`, `activo`) VALUES
-(4, '67 Camaro (HW Art Cars)', '67 Camaro - descripción', 20.00, 10, '/img/Catalogo1.png', NULL, 0, '2025-11-27 03:35:25', 1),
-(5, 'Electrack (X-Raycers)', 'Electrack - descripción', 15.00, 10, '/img/Catalogo2.png', NULL, 0, '2025-11-27 03:35:25', 1),
-(6, '15 Dodge Challenger SRT Hellcat', 'Dodge - descripción', 15.00, 10, '/img/Catalogo3.png', NULL, 0, '2025-11-27 03:35:25', 1),
-(7, 'Impavido 1', 'Impavido - descripción', 15.00, 10, '/img/Catalogo4.png', NULL, 0, '2025-11-27 03:35:25', 1),
-(8, 'Driftsta', 'Driftsta - descripción', 20.00, 10, '/img/Catalogo5.png', NULL, 0, '2025-11-27 03:35:25', 1),
-(9, 'Rip Rod', 'Rip Rod - descripción', 22.00, 10, '/img/Catalogo6.png', NULL, 0, '2025-11-27 03:35:25', 1),
-(10, 'Ford GT-40', 'Ford GT-40 - descripción', 35.00, 10, '/img/Catalogo7.png', NULL, 0, '2025-11-27 03:35:25', 1),
-(11, 'Carbonator', 'Carbonator - descripción', 20.00, 10, '/img/Catalogo8.png', NULL, 0, '2025-11-27 03:35:25', 1),
-(12, 'Let\'s GO', 'Let\'s GO - descripción', 15.00, 10, '/img/Catalogo9.png', NULL, 0, '2025-11-27 03:35:25', 1),
-(13, 'Lamborghini Aventador J', 'Aventador - descripción', 40.00, 10, '/img/Catalogo1.png', NULL, 0, '2025-11-27 03:35:25', 1),
-(14, 'Porsche 911 GT3 RS', 'Porsche - descripción', 38.00, 10, '/img/Catalogo2.png', NULL, 0, '2025-11-27 03:35:25', 1),
-(15, 'McLaren P1', 'McLaren P1 - descripción', 45.00, 10, '/img/Catalogo3.png', NULL, 0, '2025-11-27 03:35:25', 1),
-(16, 'Bugatti Chiron Super Sport', 'Bugatti - descripción', 50.00, 10, '/img/Catalogo4.png', NULL, 0, '2025-11-27 03:35:25', 1),
-(17, 'Ferrari LaFerrari', 'LaFerrari - descripción', 42.00, 10, '/img/Catalogo5.png', NULL, 0, '2025-11-27 03:35:25', 1),
-(18, 'Nissan GT-R R35 Nismo', 'Nissan - descripción', 30.00, 10, '/img/Catalogo6.png', NULL, 0, '2025-11-27 03:35:25', 1),
-(19, 'Corvette C8 Stingray', 'Corvette - descripción', 28.00, 10, '/img/Catalogo7.png', NULL, 0, '2025-11-27 03:35:25', 1),
-(20, 'Audi R8 V10 Plus', 'Audi R8 - descripción', 32.00, 10, '/img/Catalogo8.png', NULL, 0, '2025-11-27 03:35:25', 1),
-(21, 'BMW M4 Competition', 'BMW M4 - descripción', 25.00, 10, '/img/Catalogo9.png', NULL, 0, '2025-11-27 03:35:25', 1);
+(4, '67 Camaro (HW Art Cars)', '67 Camaro - descripción', 20.00, 10, '/img/Catalogo1.png', 1, 0, '2025-11-27 03:35:25', 1),
+(5, 'Electrack (X-Raycers)', 'Electrack - descripción', 15.00, 10, '/img/Catalogo2.png', 5, 0, '2025-11-27 03:35:25', 1),
+(6, '15 Dodge Challenger SRT Hellcat', 'Dodge - descripción', 15.00, 10, '/img/Catalogo3.png', 3, 0, '2025-11-27 03:35:25', 1),
+(7, 'Impavido 1', 'Impavido - descripción', 15.00, 10, '/img/Catalogo4.png', 3, 0, '2025-11-27 03:35:25', 1),
+(8, 'Driftsta', 'Driftsta - descripción', 20.00, 10, '/img/Catalogo5.png', 5, 0, '2025-11-27 03:35:25', 1),
+(9, 'Rip Rod', 'Rip Rod - descripción', 22.00, 10, '/img/Catalogo6.png', 5, 0, '2025-11-27 03:35:25', 1),
+(10, 'Ford GT-40', 'Ford GT-40 - descripción', 35.00, 10, '/img/Catalogo7.png', 2, 0, '2025-11-27 03:35:25', 1),
+(11, 'Carbonator', 'Carbonator - descripción', 20.00, 10, '/img/Catalogo8.png', 3, 0, '2025-11-27 03:35:25', 1),
+(12, 'Let\'s GO', 'Let\'s GO - descripción', 15.00, 10, '/img/Catalogo9.png', 3, 0, '2025-11-27 03:35:25', 1),
+(13, 'Lamborghini Aventador J', 'Aventador - descripción', 40.00, 10, '/img/Catalogo1.png', 4, 0, '2025-11-27 03:35:25', 1),
+(14, 'Porsche 911 GT3 RS', 'Porsche - descripción', 38.00, 10, '/img/Catalogo2.png', 2, 0, '2025-11-27 03:35:25', 1),
+(15, 'McLaren P1', 'McLaren P1 - descripción', 45.00, 10, '/img/Catalogo3.png', 2, 0, '2025-11-27 03:35:25', 1),
+(16, 'Bugatti Chiron Super Sport', 'Bugatti - descripción', 50.00, 10, '/img/Catalogo4.png', 4, 0, '2025-11-27 03:35:25', 1),
+(17, 'Ferrari LaFerrari', 'LaFerrari - descripción', 42.00, 10, '/img/Catalogo5.png', 4, 0, '2025-11-27 03:35:25', 1),
+(18, 'Nissan GT-R R35 Nismo', 'Nissan - descripción', 30.00, 10, '/img/Catalogo6.png', 2, 0, '2025-11-27 03:35:25', 1),
+(19, 'Corvette C8 Stingray', 'Corvette - descripción', 28.00, 10, '/img/Catalogo7.png', 2, 0, '2025-11-27 03:35:25', 1),
+(20, 'Audi R8 V10 Plus', 'Audi R8 - descripción', 32.00, 10, '/img/Catalogo8.png', 4, 0, '2025-11-27 03:35:25', 1),
+(21, 'BMW M4 Competition', 'BMW M4 - descripción', 25.00, 10, '/img/Catalogo9.png', 4, 0, '2025-11-27 03:35:25', 1);
 
 -- --------------------------------------------------------
 
@@ -275,16 +275,19 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id_usuario`, `nombre`, `apellido`, `dni`, `email`, `telefono`, `direccion`, `fecha_registro`, `rol`, `activo`, `contrasena`) VALUES
-(3, 'Admin', 'Principal', '00000000', 'admin@sacars.com', '+000000000', 'Oficina', '2025-11-16 01:04:06', 'administrador', 1, '$2y$10$gO3a7p9FQfTL7x1IuYkF9uW3OD8i4OKe2ZjzQGQOkScpZq3Q0KM5O'),
-(4, 'Cliente', 'Prueba', '00000000', 'cliente@sacars.com', '+111111111', 'Calle Falsa 123', '2025-11-16 01:04:06', 'cliente', 1, '$2y$10$7ZCY8WwJP0zZ7M8mFQG5zOikOfqI3CjsIq3Qc8hozRTQ9Lrbf5EfW'),
-(5, 'Pepe', 'Perez', '', 'pepe@gmail.com', '918341878', '', '2025-11-16 01:47:26', 'cliente', 1, '$2a$10$9xRWOZ5tG/MSDlrBBAHlBe9R//GJZ/FI588Zk1rH/5c0H347Vvnpq'),
-(10, 'Jose Santiago', 'Ponce ', '00000000', 'ponceri@gmail.com', '918341898', '', '2025-11-19 11:50:47', 'cliente', 1, '$2a$10$uNlLdvdmouwo5ECCxUfBEOIEwgxGmH0H67Rblssdlo.eupFGfSQVu'),
-(11, 'Josesito san', 'Ponce Riveros', '72129870', 'ponceriverosjosesantiagoo@gmail.com', '918341899', 'Jr Lima 123', '2025-11-26 16:59:15', 'cliente', 1, '$2a$10$/N/aauX1RsrAWnuqhnb9GOU2zeGy/UFPLE37xkvoeOTn7NUA9De1q'),
-(12, 'Katty', 'de Ponce', '61953526', 'katty@gmail.com', '+34937355858', '', '2025-11-26 22:31:18', 'cliente', 1, '$2a$10$H.JsTtf6rGrNDDtvexrWJOE2yBpc5srqt.N5xeUWQyq8XuzHfIoXC'),
+(4, 'Cliente', 'Prueba', '00000000', 'cliente@sacars.com', '+111111111', 'Calle Falsa 123', '2025-11-16 01:04:06', 'cliente', 0, '$2y$10$7ZCY8WwJP0zZ7M8mFQG5zOikOfqI3CjsIq3Qc8hozRTQ9Lrbf5EfW'),
+(5, 'Pepe', 'Perez', '', 'pepe@gmail.com', '918341878', '', '2025-11-16 01:47:26', 'cliente', 0, '$2a$10$9xRWOZ5tG/MSDlrBBAHlBe9R//GJZ/FI588Zk1rH/5c0H347Vvnpq'),
+(10, 'Jose Santiago', 'Ponce ', '00000000', 'ponceri@gmail.com', '918341898', '', '2025-11-19 11:50:47', 'cliente', 0, '$2a$10$uNlLdvdmouwo5ECCxUfBEOIEwgxGmH0H67Rblssdlo.eupFGfSQVu'),
+(11, 'Josesito san', 'Ponce Riveros', '89828389', 'ponceriverosjosesantiagoo@gmail.com', '918341899', 'Jr Lima 123456', '2025-11-26 16:59:15', 'cliente', 0, '$2a$10$/N/aauX1RsrAWnuqhnb9GOU2zeGy/UFPLE37xkvoeOTn7NUA9De1q'),
+(12, 'Katty', 'de Ponce', '61953526', 'katty@gmail.com', '+34937355858', '', '2025-11-26 22:31:18', 'cliente', 0, '$2a$10$H.JsTtf6rGrNDDtvexrWJOE2yBpc5srqt.N5xeUWQyq8XuzHfIoXC'),
 (13, 'Pita', 'Pen', '71273737', 'pita@gmail.com', '91838848', '', '2025-11-26 22:34:22', 'cliente', 1, '$2a$10$dEpgoHFlGDd0gQn5kNe0euHZe.i0LSJaxflZVEd.03okjMVTA/mhe'),
 (14, 'Josesitox', 'pinedo', '72129871', 'saap@gmail.com', '987456732', 'jr lola', '2025-11-26 23:58:51', 'cliente', 1, '$2a$10$.t9vw8Md2x0aqDmFoFZtzOtUT2/wijlEfl.wyELWT.9a0uLFMO5XK'),
 (15, 'ramiro', 'lopez', '71678963', 'juanito@gmail.com', '999999991', '', '2025-12-02 16:53:53', 'cliente', 1, '$2a$10$IbcJnmH6dvf55IIGP7WjpuXAskdXrTQb7VVSJylTmzR27dQAw.AXK'),
-(16, 'Jordy Adriel', 'Ponce', '23434432', 'jordy@gmail.com', '999666111', '', '2026-01-31 12:49:36', 'cliente', 1, '$2a$10$SADifeGqoaNugAx8WHo9L.Jz/HL/BGfHXG1GPkEHQ4iiNArv.QDOS');
+(16, 'Jordy Adriel', 'Ponce', '23434432', 'jordy@gmail.com', '999666111', '', '2026-01-31 12:49:36', 'cliente', 0, '$2a$10$SADifeGqoaNugAx8WHo9L.Jz/HL/BGfHXG1GPkEHQ4iiNArv.QDOS'),
+(17, 'Admin', 'Principal', '00000000', 'admin@sacars.com', '+000000000', 'Oficina Central', '2026-02-09 17:58:38', 'administrador', 0, '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy'),
+(18, 'Santiago', 'Administrador', '12345678', 'santiadmin@gmail.com', '+51999999999', 'Oficina Central SaCars', '2026-02-09 18:07:06', 'administrador', 0, '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy'),
+(19, 'Ponce', 'Admin', '87654321', 'ponceadmin@gmail.com', '+51999888777', 'Oficina Admin', '2026-02-12 05:27:36', 'administrador', 1, '$2a$10$mrJGKYr99nmvJKCz9ZL.zu4hjMzRx18md5RObjMoUdaxni.gLqwRe'),
+(20, 'Paolo Guerrero', 'Yupanqui', '11999182', 'Guerrero@gmail.com', '784156799', 'jr lima 898', '2026-02-12 13:07:33', 'cliente', 1, '$2a$10$l03.HjMpbFDCMGjEcdC4pObhBuWKeM47JE6dDqLHs2PABDSIFufWG');
 
 --
 -- Índices para tablas volcadas
@@ -397,7 +400,7 @@ ALTER TABLE `productos`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- Restricciones para tablas volcadas

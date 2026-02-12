@@ -146,7 +146,7 @@ function mostrarProductos(productos) {
         let badgeStock = '';
         if (producto.stock === 0) {
             badgeStock = '<span class="badge badge-danger">Sin stock</span>';
-        } else if (producto.stock < 10) {
+        } else if (producto.stock < 3) {
             badgeStock = `<span class="badge badge-warning">${producto.stock}</span>`;
         } else {
             badgeStock = `<span class="badge badge-success">${producto.stock}</span>`;
@@ -156,11 +156,6 @@ function mostrarProductos(productos) {
         const badgeEstado = producto.activo 
             ? '<span class="badge badge-success">Activo</span>'
             : '<span class="badge badge-danger">Inactivo</span>';
-
-        // Destacado
-        const badgeDestacado = producto.destacado 
-            ? '⭐'
-            : '';
 
         // Imagen
         const imagen = producto.imagenUrl 
@@ -182,7 +177,6 @@ function mostrarProductos(productos) {
                 <td><strong>${precio}</strong></td>
                 <td>${badgeStock}</td>
                 <td>${producto.categoriaNombre || '-'}</td>
-                <td>${badgeDestacado}</td>
                 <td>${badgeEstado}</td>
                 <td>
                     <button class="btn-action btn-edit" onclick="editarProducto(${producto.idProducto})" title="Editar">
@@ -209,7 +203,6 @@ function mostrarModalCrear() {
     $('#idProducto').val('');
     $('#stock').prop('disabled', false);
     $('#activo').val('true');
-    $('#destacado').val('false');
     $('#modalProducto').fadeIn();
 }
 
@@ -228,7 +221,6 @@ function editarProducto(idProducto) {
             $('#stock').prop('disabled', true); // No permitir editar stock directamente
             $('#idCategoria').val(producto.idCategoria);
             $('#imagenUrl').val(producto.imagenUrl);
-            $('#destacado').val(producto.destacado.toString());
             $('#activo').val(producto.activo.toString());
             $('#modalProducto').fadeIn();
         },
@@ -250,7 +242,6 @@ function guardarProducto() {
         stock: parseInt($('#stock').val()),
         idCategoria: parseInt($('#idCategoria').val()),
         imagenUrl: $('#imagenUrl').val(),
-        destacado: $('#destacado').val() === 'true',
         activo: $('#activo').val() === 'true'
     };
 

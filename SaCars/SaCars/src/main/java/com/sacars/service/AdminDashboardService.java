@@ -99,9 +99,9 @@ public class AdminDashboardService {
         Long totalStock = productoRepository.sumTotalStock();
         stats.setTotalUnidadesStock(totalStock != null ? totalStock : 0L);
         
-        // Productos con stock bajo (menos de 10 unidades)
+        // Productos con stock bajo (menos de 3 unidades)
         stats.setProductosStockBajo(
-            (long) productoRepository.findProductosStockBajo(10).size()
+            (long) productoRepository.findProductosStockBajo(3).size()
         );
         
         // Productos sin stock

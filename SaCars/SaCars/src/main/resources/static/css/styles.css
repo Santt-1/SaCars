@@ -1343,7 +1343,7 @@ a {
     box-shadow: 0 2px 8px rgba(255, 173, 0, 0.3);
     transform: translateY(-2px);
 }
-}
+
 
 @media (max-width: 768px) {
     .barra {

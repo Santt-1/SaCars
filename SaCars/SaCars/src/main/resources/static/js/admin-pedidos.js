@@ -19,6 +19,15 @@ $(document).ready(function() {
         aplicarFiltros();
     });
 
+    // Buscador por nombre de cliente
+    let timeoutBusqueda = null;
+    $('#buscarCliente').on('input', function() {
+        clearTimeout(timeoutBusqueda);
+        timeoutBusqueda = setTimeout(() => {
+            buscarPorCliente();
+        }, 400); // Debounce de 400ms
+    });
+
     // Resumen del día
     $('#btnResumenHoy').on('click', function() {
         cargarResumenDelDia();
@@ -61,6 +70,32 @@ function cargarPedidos() {
     });
 }
 
+// Buscar por nombre de cliente
+function buscarPorCliente() {
+    const query = $('#buscarCliente').val().trim();
+    
+    // Limpiar otros filtros cuando se busca
+    if (query) {
+        $('#filtroEstado').val('');
+        $('#filtroZona').val('');
+    }
+    
+    $.ajax({
+        url: '/admin/pedidos/api/buscar',
+        method: 'GET',
+        data: { q: query },
+        beforeSend: function() {
+            $('#tablaPedidos').html('<tr><td colspan="8" class="loading">Buscando...</td></tr>');
+        },
+        success: function(data) {
+            mostrarPedidos(data);
+        },
+        error: function() {
+            $('#tablaPedidos').html('<tr><td colspan="8" class="empty-state">Error al buscar</td></tr>');
+        }
+    });
+}
+
 // Aplicar filtros
 function aplicarFiltros() {
     const estado = $('#filtroEstado').val();
@@ -94,7 +129,7 @@ function cargarPedidosFiltrados(url, zonaFiltro = null) {
         method: 'GET',
         success: function(data) {
             if (zonaFiltro) {
-                data = data.filter(p => p.zonaEntrega === zonaFiltro);
+                data = data.filter(p => p.ciudadEnvio === zonaFiltro);
             }
             mostrarPedidos(data);
         },
@@ -115,16 +150,17 @@ function mostrarPedidos(pedidos) {
     }
 
     pedidos.forEach(pedido => {
-        // Badge de estado
+        // Badge de estado (normalizar a mayúsculas)
+        const estadoUpper = (pedido.estado || '').toUpperCase();
         let badgeEstado = '';
-        switch(pedido.estado) {
-            case 'pendiente':
+        switch(estadoUpper) {
+            case 'PENDIENTE':
                 badgeEstado = '<span class="badge badge-warning">⏳ Pendiente</span>';
                 break;
-            case 'completado':
+            case 'COMPLETADO':
                 badgeEstado = '<span class="badge badge-success">✅ Completado</span>';
                 break;
-            case 'cancelado':
+            case 'CANCELADO':
                 badgeEstado = '<span class="badge badge-danger">❌ Cancelado</span>';
                 break;
             default:
@@ -151,13 +187,13 @@ function mostrarPedidos(pedidos) {
                 <td>${fechaFormateada}</td>
                 <td><strong>${total}</strong></td>
                 <td>${badgeEstado}</td>
-                <td>${pedido.zonaEntrega || '-'}</td>
+                <td>${pedido.ciudadEnvio || '-'}</td>
                 <td><span class="badge badge-info">${items}</span></td>
                 <td>
                     <button class="btn-action btn-view" onclick="verDetallePedido(${pedido.idPedido})" title="Ver detalle">
                         👁️
                     </button>
-                    ${pedido.estado === 'pendiente' 
+                    ${estadoUpper === 'PENDIENTE' 
                         ? `<button class="btn-action btn-complete" onclick="marcarComoCompletado(${pedido.idPedido})" title="Completar">✅</button>`
                         : ''
                     }
@@ -190,23 +226,24 @@ function verDetallePedido(idPedido) {
             const fechaFormateada = fecha.toLocaleDateString('es-PE') + ' ' + fecha.toLocaleTimeString('es-PE');
             $('#pedidoFecha').text(fechaFormateada);
             
-            // Badge de estado
+            // Badge de estado (normalizar a mayúsculas)
+            const estadoUpper = (pedido.estado || '').toUpperCase();
             let badgeEstado = '';
-            switch(pedido.estado) {
-                case 'pendiente':
+            switch(estadoUpper) {
+                case 'PENDIENTE':
                     badgeEstado = '<span class="badge badge-warning">⏳ Pendiente</span>';
                     break;
-                case 'completado':
+                case 'COMPLETADO':
                     badgeEstado = '<span class="badge badge-success">✅ Completado</span>';
                     break;
-                case 'cancelado':
+                case 'CANCELADO':
                     badgeEstado = '<span class="badge badge-danger">❌ Cancelado</span>';
                     break;
                 default:
                     badgeEstado = `<span class="badge badge-info">${pedido.estado}</span>`;
             }
             $('#pedidoEstado').html(badgeEstado);
-            $('#pedidoZona').text(pedido.zonaEntrega || 'N/A');
+            $('#pedidoZona').text(pedido.ciudadEnvio || 'N/A');
 
             const total = new Intl.NumberFormat('es-PE', {
                 style: 'currency',
@@ -235,11 +272,11 @@ function verDetallePedido(idPedido) {
                     }).format(subtotal);
 
                     const row = `
-                        <tr>
-                            <td style="padding: 12px;">${producto.nombreProducto}</td>
-                            <td style="padding: 12px; text-align: center;"><strong>${producto.cantidad}</strong></td>
-                            <td style="padding: 12px; text-align: right;">${precioUnit}</td>
-                            <td style="padding: 12px; text-align: right;"><strong>${subtotalFormateado}</strong></td>
+                        <tr style="border-bottom: 1px solid #eee; background: #fff;">
+                            <td style="padding: 14px 12px; color: #333; font-weight: 500;">${producto.nombreProducto}</td>
+                            <td style="padding: 14px 12px; text-align: center; color: #1a1a2e;"><strong>${producto.cantidad}</strong></td>
+                            <td style="padding: 14px 12px; text-align: right; color: #555;">${precioUnit}</td>
+                            <td style="padding: 14px 12px; text-align: right; color: #27ae60;"><strong>${subtotalFormateado}</strong></td>
                         </tr>
                     `;
                     productosBody.append(row);
@@ -252,9 +289,9 @@ function verDetallePedido(idPedido) {
                 }).format(subtotalGeneral);
 
                 productosBody.append(`
-                    <tr style="border-top: 2px solid #1a1a2e;">
-                        <td colspan="3" style="padding: 15px; text-align: right;"><strong>TOTAL:</strong></td>
-                        <td style="padding: 15px; text-align: right; font-size: 18px; color: #27ae60;"><strong>${totalFormateado}</strong></td>
+                    <tr style="border-top: 2px solid #1a1a2e; background: #f8f9fa;">
+                        <td colspan="3" style="padding: 16px 12px; text-align: right; color: #1a1a2e; font-size: 16px;"><strong>TOTAL:</strong></td>
+                        <td style="padding: 16px 12px; text-align: right; font-size: 20px; color: #27ae60;"><strong>${totalFormateado}</strong></td>
                     </tr>
                 `);
             } else {
@@ -262,7 +299,7 @@ function verDetallePedido(idPedido) {
             }
 
             // Mostrar/ocultar botón de completar
-            if (pedido.estado === 'pendiente') {
+            if (estadoUpper === 'PENDIENTE') {
                 $('#btnMarcarCompletado').show();
             } else {
                 $('#btnMarcarCompletado').hide();

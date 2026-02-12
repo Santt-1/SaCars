@@ -1,14 +1,17 @@
 package com.sacars.service;
 
 import com.sacars.dto.CategoriaFormDTO;
+import com.sacars.dto.CategoriaResponseDTO;
 import com.sacars.model.Categoria;
 import com.sacars.repository.CategoriaRepository;
+import com.sacars.repository.ProductoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Servicio para CRUD de Categorías (RQ1.7)
@@ -20,6 +23,7 @@ import java.util.Optional;
 public class AdminCategoriaService {
     
     private final CategoriaRepository categoriaRepository;
+    private final ProductoRepository productoRepository;
     
     /**
      * Listar todas las categorías
@@ -27,6 +31,31 @@ public class AdminCategoriaService {
     @Transactional(readOnly = true)
     public List<Categoria> listarTodas() {
         return categoriaRepository.findAll();
+    }
+    
+    /**
+     * Listar todas las categorías con cantidad de productos
+     */
+    @Transactional(readOnly = true)
+    public List<CategoriaResponseDTO> listarTodasConProductos() {
+        List<Categoria> categorias = categoriaRepository.findAll();
+        return categorias.stream()
+                .map(this::convertirACategoriaResponseDTO)
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Convertir Categoria a CategoriaResponseDTO con cantidad de productos
+     */
+    private CategoriaResponseDTO convertirACategoriaResponseDTO(Categoria categoria) {
+        long cantidadProductos = productoRepository.findByIdCategoria(categoria.getIdCategoria()).size();
+        return new CategoriaResponseDTO(
+                categoria.getIdCategoria(),
+                categoria.getNombre(),
+                categoria.getDescripcion(),
+                categoria.getImagenUrl(),
+                cantidadProductos
+        );
     }
     
     /**

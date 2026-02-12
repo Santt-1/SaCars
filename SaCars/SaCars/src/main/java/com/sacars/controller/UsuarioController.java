@@ -4,7 +4,6 @@ import com.sacars.model.Usuario;
 import com.sacars.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 

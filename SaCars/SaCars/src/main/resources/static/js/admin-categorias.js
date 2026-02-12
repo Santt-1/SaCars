@@ -94,36 +94,36 @@ function mostrarCategorias(categorias) {
     tbody.empty();
 
     if (categorias.length === 0) {
-        tbody.html('<tr><td colspan="6" class="empty-state">No se encontraron categorías</td></tr>');
+        tbody.html('<tr><td colspan="6" class="empty-state" style="text-align: center; padding: 50px; color: #95a5a6;">No se encontraron categorías</td></tr>');
         return;
     }
 
     categorias.forEach(categoria => {
         // Imagen
         const imagen = categoria.imagenUrl 
-            ? `<img src="${categoria.imagenUrl}" alt="${categoria.nombre}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;">`
-            : '<div style="width: 60px; height: 60px; background: #eee; border-radius: 5px; display: flex; align-items: center; justify-content: center;">📁</div>';
+            ? `<img src="${categoria.imagenUrl}" alt="${categoria.nombre}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">`
+            : '<div style="width: 70px; height: 70px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 32px; color: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">📁</div>';
 
         // Cantidad de productos
         const cantidadProductos = categoria.cantidadProductos || 0;
         const badgeProductos = cantidadProductos > 0 
-            ? `<span class="badge badge-info">${cantidadProductos}</span>`
-            : '<span class="badge badge-secondary">0</span>';
+            ? `<span class="badge badge-info" style="font-size: 14px; padding: 8px 16px;">${cantidadProductos}</span>`
+            : '<span class="badge badge-secondary" style="font-size: 14px; padding: 8px 16px;">0</span>';
 
         const fila = `
             <tr>
-                <td><strong>${categoria.idCategoria}</strong></td>
+                <td style="font-weight: 700; color: #1a1a2e; font-size: 16px;">#${categoria.idCategoria}</td>
                 <td>${imagen}</td>
-                <td><strong>${categoria.nombre}</strong></td>
-                <td>${categoria.descripcion || '-'}</td>
-                <td>${badgeProductos}</td>
-                <td>
+                <td style="font-weight: 600; color: #1a1a2e; font-size: 15px;">${categoria.nombre}</td>
+                <td style="color: #555; max-width: 350px;">${categoria.descripcion || '<span style="color: #bdc3c7; font-style: italic;">Sin descripción</span>'}</td>
+                <td style="text-align: center;">${badgeProductos}</td>
+                <td style="white-space: nowrap;">
                     <button class="btn-action btn-edit" onclick="editarCategoria(${categoria.idCategoria})" title="Editar">
                         ✏️
                     </button>
                     ${cantidadProductos === 0 
                         ? `<button class="btn-action btn-delete" onclick="eliminarCategoria(${categoria.idCategoria})" title="Eliminar">🗑️</button>`
-                        : `<button class="btn-action btn-disabled" title="No se puede eliminar (tiene productos asociados)" disabled>🗑️</button>`
+                        : `<button class="btn-action btn-disabled" title="No se puede eliminar (tiene ${cantidadProductos} producto${cantidadProductos > 1 ? 's' : ''} asociado${cantidadProductos > 1 ? 's' : ''})" disabled>🗑️</button>`
                     }
                 </td>
             </tr>
