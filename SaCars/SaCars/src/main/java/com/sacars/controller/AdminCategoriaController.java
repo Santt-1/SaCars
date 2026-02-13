@@ -11,15 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Controlador para CRUD de Categorías (RQ1.7)
- * Gestión de categorías que organizan el catálogo
- */
+/*Controlador para CRUD de Categorías / Gestión de categorías que organizan el catálogo */
 @Controller
 @RequestMapping("/admin/categorias")
 @RequiredArgsConstructor
@@ -27,19 +23,13 @@ public class AdminCategoriaController {
     
     private final AdminCategoriaService categoriaService;
     
-    /**
-     * Vista de gestión de categorías
-     * GET /admin/categorias
-     */
+    /* Vista de gestión de categorías / GET /admin/categorias */
     @GetMapping
     public String mostrarVistaCategorias() {
         return "admin/categorias";
     }
     
-    /**
-     * API: Listar todas las categorías
-     * GET /admin/categorias/api/listar
-     */
+    /* API: Listar todas las categorías / GET /admin/categorias/api/listar */
     @GetMapping("/api/listar")
     @ResponseBody
     public ResponseEntity<List<CategoriaResponseDTO>> listarCategorias() {
@@ -51,10 +41,7 @@ public class AdminCategoriaController {
         }
     }
     
-    /**
-     * API: Obtener categoría por ID
-     * GET /admin/categorias/api/{id}
-     */
+    /* API: Obtener categoría por ID / GET /admin/categorias/api/{id}*/
     @GetMapping("/api/{id}")
     @ResponseBody
     public ResponseEntity<?> obtenerCategoria(@PathVariable Long id) {
@@ -67,10 +54,7 @@ public class AdminCategoriaController {
         }
     }
     
-    /**
-     * API: Crear nueva categoría
-     * POST /admin/categorias/api/crear
-     */
+    /* API: Crear nueva categoría / POST /admin/categorias/api/crear */
     @PostMapping("/api/crear")
     @ResponseBody
     public ResponseEntity<?> crearCategoria(@Valid @RequestBody CategoriaFormDTO dto, BindingResult result) {
@@ -96,10 +80,7 @@ public class AdminCategoriaController {
         }
     }
     
-    /**
-     * API: Editar categoría existente
-     * PUT /admin/categorias/api/editar/{id}
-     */
+    /* API: Editar categoría existente / PUT /admin/categorias/api/editar/{id} */
     @PutMapping("/api/editar/{id}")
     @ResponseBody
     public ResponseEntity<?> editarCategoria(
@@ -129,10 +110,7 @@ public class AdminCategoriaController {
         }
     }
     
-    /**
-     * API: Eliminar categoría permanentemente
-     * DELETE /admin/categorias/api/eliminar/{id}
-     */
+    /* API: Eliminar categoría permanentemente / DELETE /admin/categorias/api/eliminar/{id} */
     @DeleteMapping("/api/eliminar/{id}")
     @ResponseBody
     public ResponseEntity<?> eliminarCategoria(@PathVariable Long id) {

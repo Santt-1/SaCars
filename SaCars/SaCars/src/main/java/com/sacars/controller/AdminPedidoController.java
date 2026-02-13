@@ -8,17 +8,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Controlador para Gestión de Pedidos (RQ1.8)
- * Administración completa de pedidos desde el panel administrativo
- */
+/*Controlador para Gestión de Pedidos*/
 @Controller
 @RequestMapping("/admin/pedidos")
 @RequiredArgsConstructor
@@ -26,19 +22,13 @@ public class AdminPedidoController {
     
     private final AdminPedidoService pedidoService;
     
-    /**
-     * Vista de gestión de pedidos
-     * GET /admin/pedidos
-     */
+    /* Vista de gestión de pedidos / GET /admin/pedidos */
     @GetMapping
     public String mostrarVistaPedidos() {
         return "admin/pedidos";
     }
     
-    /**
-     * API: Listar todos los pedidos
-     * GET /admin/pedidos/api/listar
-     */
+    /* API: Listar todos los pedidos / GET /admin/pedidos/api/listar */
     @GetMapping("/api/listar")
     @ResponseBody
     public ResponseEntity<List<PedidoResponseDTO>> listarPedidos() {
@@ -50,10 +40,7 @@ public class AdminPedidoController {
         }
     }
     
-    /**
-     * API: Listar pedidos recientes (últimos 10)
-     * GET /admin/pedidos/api/recientes
-     */
+    /* API: Listar pedidos recientes / GET /admin/pedidos/api/recientes */
     @GetMapping("/api/recientes")
     @ResponseBody
     public ResponseEntity<List<Pedido>> listarRecientes() {
@@ -65,10 +52,7 @@ public class AdminPedidoController {
         }
     }
     
-    /**
-     * API: Obtener pedido por ID
-     * GET /admin/pedidos/api/{id}
-     */
+    /* API: Obtener pedido por ID / GET /admin/pedidos/api/{id} */
     @GetMapping("/api/{id}")
     @ResponseBody
     public ResponseEntity<?> obtenerPedido(@PathVariable Long id) {
@@ -81,10 +65,7 @@ public class AdminPedidoController {
         }
     }
     
-    /**
-     * API: Listar pedidos por estado
-     * GET /admin/pedidos/api/estado/{estado}
-     */
+    /* API: Listar pedidos por estado / GET /admin/pedidos/api/estado/{estado} */
     @GetMapping("/api/estado/{estado}")
     @ResponseBody
     public ResponseEntity<List<PedidoResponseDTO>> listarPorEstado(@PathVariable String estado) {
@@ -96,10 +77,7 @@ public class AdminPedidoController {
         }
     }
     
-    /**
-     * API: Listar pedidos pendientes
-     * GET /admin/pedidos/api/pendientes
-     */
+    /* API: Listar pedidos pendientes / GET /admin/pedidos/api/pendientes */
     @GetMapping("/api/pendientes")
     @ResponseBody
     public ResponseEntity<List<Pedido>> listarPendientes() {
@@ -111,10 +89,7 @@ public class AdminPedidoController {
         }
     }
     
-    /**
-     * API: Listar pedidos completados
-     * GET /admin/pedidos/api/completados
-     */
+    /* API: Listar pedidos completados / GET /admin/pedidos/api/completados */
     @GetMapping("/api/completados")
     @ResponseBody
     public ResponseEntity<List<Pedido>> listarCompletados() {
@@ -126,10 +101,7 @@ public class AdminPedidoController {
         }
     }
     
-    /**
-     * API: Listar pedidos por zona (ciudad)
-     * GET /admin/pedidos/api/zona/{ciudad}
-     */
+    /* API: Listar pedidos por zona / GET /admin/pedidos/api/zona/{ciudad} */
     @GetMapping("/api/zona/{ciudad}")
     @ResponseBody
     public ResponseEntity<List<Pedido>> listarPorZona(@PathVariable String ciudad) {
@@ -141,10 +113,7 @@ public class AdminPedidoController {
         }
     }
     
-    /**
-     * API: Buscar pedidos por cliente
-     * GET /admin/pedidos/api/buscar?q=texto
-     */
+    /* API: Buscar pedidos por cliente / GET /admin/pedidos/api/buscar?q=texto */
     @GetMapping("/api/buscar")
     @ResponseBody
     public ResponseEntity<List<PedidoResponseDTO>> buscarPorCliente(@RequestParam(required = false) String q) {
@@ -156,10 +125,7 @@ public class AdminPedidoController {
         }
     }
     
-    /**
-     * API: Listar pedidos por período
-     * GET /admin/pedidos/api/periodo?inicio=2025-01-01T00:00:00&fin=2025-12-31T23:59:59
-     */
+    /* API: Listar pedidos por período */
     @GetMapping("/api/periodo")
     @ResponseBody
     public ResponseEntity<List<Pedido>> listarPorPeriodo(
@@ -174,10 +140,7 @@ public class AdminPedidoController {
         }
     }
     
-    /**
-     * API: Marcar pedido como completado
-     * PUT /admin/pedidos/api/completar/{id}
-     */
+    /* API: Marcar pedido como completado / PUT /admin/pedidos/api/completar/{id} */
     @PutMapping("/api/completar/{id}")
     @ResponseBody
     public ResponseEntity<?> marcarComoCompletado(@PathVariable Long id) {
@@ -195,10 +158,7 @@ public class AdminPedidoController {
         }
     }
     
-    /**
-     * API: Marcar pedido como pendiente
-     * PUT /admin/pedidos/api/pendiente/{id}
-     */
+    /* API: Marcar pedido como pendiente / PUT /admin/pedidos/api/pendiente/{id} */
     @PutMapping("/api/pendiente/{id}")
     @ResponseBody
     public ResponseEntity<?> marcarComoPendiente(@PathVariable Long id) {
@@ -214,10 +174,7 @@ public class AdminPedidoController {
         }
     }
     
-    /**
-     * API: Cancelar pedido
-     * PUT /admin/pedidos/api/cancelar/{id}
-     */
+    /* API: Cancelar pedido / PUT /admin/pedidos/api/cancelar/{id} */
     @PutMapping("/api/cancelar/{id}")
     @ResponseBody
     public ResponseEntity<?> cancelarPedido(@PathVariable Long id) {
@@ -235,10 +192,7 @@ public class AdminPedidoController {
         }
     }
     
-    /**
-     * API: Cambiar estado de pedido (genérico)
-     * PUT /admin/pedidos/api/cambiar-estado/{id}
-     */
+    /* API: Cambiar estado de pedido / PUT /admin/pedidos/api/cambiar-estado/{id} */
     @PutMapping("/api/cambiar-estado/{id}")
     @ResponseBody
     public ResponseEntity<?> cambiarEstado(
@@ -266,10 +220,7 @@ public class AdminPedidoController {
         }
     }
     
-    /**
-     * API: Obtener resumen de pedidos de hoy
-     * GET /admin/pedidos/api/resumen-hoy
-     */
+    /* API: Obtener resumen de pedidos de hoy / GET /admin/pedidos/api/resumen-hoy */
     @GetMapping("/api/resumen-hoy")
     @ResponseBody
     public ResponseEntity<?> obtenerResumenHoy() {
@@ -281,10 +232,7 @@ public class AdminPedidoController {
         }
     }
     
-    /**
-     * API: Calcular ventas por período
-     * GET /admin/pedidos/api/ventas?inicio=2025-01-01T00:00:00&fin=2025-12-31T23:59:59
-     */
+    /* API: Calcular ventas por período / GET /admin/pedidos/api/ventas */
     @GetMapping("/api/ventas")
     @ResponseBody
     public ResponseEntity<?> calcularVentas(

@@ -1,6 +1,6 @@
 /**
  * Reportes y Análisis - Panel Administrativo
- * SaCars
+ * SaCars - Corregido para coincidir con endpoints del backend
  */
 
 let periodoActual = 'hoy';
@@ -15,7 +15,7 @@ $(document).ready(function() {
         $('.btn-periodo').removeClass('activo');
         $(this).addClass('activo');
         periodoActual = $(this).data('periodo');
-        cargarReportes();
+        cargarReporteVentas(); // Solo recargar ventas al cambiar período
     });
 });
 
@@ -39,7 +39,7 @@ function cargarReportes() {
     cargarReportePorZona();
 }
 
-// Reporte de ventas
+// Reporte de ventas - URLs corregidas
 function cargarReporteVentas() {
     let endpoint = '';
     switch(periodoActual) {
@@ -47,10 +47,10 @@ function cargarReporteVentas() {
             endpoint = '/admin/reportes/api/ventas/hoy';
             break;
         case 'semana':
-            endpoint = '/admin/reportes/api/ventas/semana';
+            endpoint = '/admin/reportes/api/ventas/ultima-semana';
             break;
         case 'mes':
-            endpoint = '/admin/reportes/api/ventas/mes';
+            endpoint = '/admin/reportes/api/ventas/ultimo-mes';
             break;
     }
 
@@ -62,93 +62,96 @@ function cargarReporteVentas() {
         },
         error: function() {
             $('#tablaVentas').html('<tr><td colspan="3" class="empty-state">Error al cargar reporte</td></tr>');
+            $('#totalVentas').text('S/ 0.00');
         }
     });
 }
 
-// Mostrar reporte de ventas
+// Mostrar reporte de ventas - Adaptado para ReporteVentasDTO
 function mostrarReporteVentas(data) {
-    // Actualizar total
-    const total = data.reduce((sum, item) => sum + item.total, 0);
+    // El backend devuelve un objeto ReporteVentasDTO, no un array
+    const totalVentas = data.totalVentas || 0;
     const totalFormateado = new Intl.NumberFormat('es-PE', {
         style: 'currency',
         currency: 'PEN'
-    }).format(total);
+    }).format(totalVentas);
     $('#totalVentas').text(totalFormateado);
 
-    // Actualizar tabla
+    // Actualizar tabla con resumen
     const tbody = $('#tablaVentas');
     tbody.empty();
 
-    if (data.length === 0) {
-        tbody.html('<tr><td colspan="3" class="empty-state">No hay datos para este período</td></tr>');
+    if (data.totalPedidos === 0) {
+        tbody.html('<tr><td colspan="3" class="empty-state">No hay pedidos para este período</td></tr>');
         if (chartVentas) chartVentas.destroy();
         return;
     }
 
-    data.forEach(item => {
-        const totalItem = new Intl.NumberFormat('es-PE', {
-            style: 'currency',
-            currency: 'PEN'
-        }).format(item.total);
+    // Mostrar resumen del período
+    const ticketPromedio = new Intl.NumberFormat('es-PE', {
+        style: 'currency',
+        currency: 'PEN'
+    }).format(data.ticketPromedio || 0);
 
-        const fila = `
-            <tr>
-                <td>${item.fecha}</td>
-                <td><span class="badge badge-info">${item.cantidadPedidos}</span></td>
-                <td><strong>${totalItem}</strong></td>
-            </tr>
-        `;
-        tbody.append(fila);
-    });
+    tbody.append(`
+        <tr>
+            <td><strong>📋 ${data.periodoDescripcion || 'Período'}</strong></td>
+            <td><span class="badge badge-info">${data.totalPedidos || 0} pedidos</span></td>
+            <td><strong>${totalFormateado}</strong></td>
+        </tr>
+        <tr>
+            <td>✅ Completados</td>
+            <td><span class="badge badge-success">${data.pedidosCompletados || 0}</span></td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>⏳ Pendientes</td>
+            <td><span class="badge badge-warning">${data.pedidosPendientes || 0}</span></td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>📊 Ticket Promedio</td>
+            <td>-</td>
+            <td><strong>${ticketPromedio}</strong></td>
+        </tr>
+    `);
 
-    // Actualizar gráfico
-    const labels = data.map(item => item.fecha);
-    const valores = data.map(item => item.total);
-
+    // Gráfico de barras para el resumen
     if (chartVentas) chartVentas.destroy();
 
     const ctx = document.getElementById('chartVentas').getContext('2d');
     chartVentas = new Chart(ctx, {
-        type: 'line',
+        type: 'bar',
         data: {
-            labels: labels,
+            labels: ['Completados', 'Pendientes'],
             datasets: [{
-                label: 'Ventas (S/)',
-                data: valores,
-                borderColor: '#667eea',
-                backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                borderWidth: 3,
-                tension: 0.4,
-                fill: true
+                label: 'Pedidos',
+                data: [data.pedidosCompletados || 0, data.pedidosPendientes || 0],
+                backgroundColor: ['rgba(39, 174, 96, 0.8)', 'rgba(255, 193, 7, 0.8)'],
+                borderColor: ['#27ae60', '#ffc107'],
+                borderWidth: 2
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    display: false
-                }
+                legend: { display: false }
             },
             scales: {
                 y: {
                     beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return 'S/ ' + value.toLocaleString('es-PE');
-                        }
-                    }
+                    ticks: { stepSize: 1 }
                 }
             }
         }
     });
 }
 
-// Top clientes
+// Top clientes - URL corregida
 function cargarTopClientes() {
     $.ajax({
-        url: '/admin/reportes/api/top-clientes',
+        url: '/admin/reportes/api/clientes/top',
         method: 'GET',
         success: function(data) {
             mostrarTopClientes(data);
@@ -159,21 +162,22 @@ function cargarTopClientes() {
     });
 }
 
-// Mostrar top clientes
+// Mostrar top clientes - Campo corregido: totalGastado
 function mostrarTopClientes(data) {
     const tbody = $('#tablaTopClientes');
     tbody.empty();
 
-    if (data.length === 0) {
+    if (!data || data.length === 0) {
         tbody.html('<tr><td colspan="5" class="empty-state">No hay datos disponibles</td></tr>');
         return;
     }
 
     data.forEach((cliente, index) => {
+        // El backend usa 'totalGastado', no 'totalComprado'
         const totalComprado = new Intl.NumberFormat('es-PE', {
             style: 'currency',
             currency: 'PEN'
-        }).format(cliente.totalComprado);
+        }).format(cliente.totalGastado || 0);
 
         // Medallas para los 3 primeros
         let medalla = '';
@@ -184,9 +188,9 @@ function mostrarTopClientes(data) {
         const fila = `
             <tr>
                 <td><strong>${medalla} ${index + 1}</strong></td>
-                <td>${cliente.nombreCompleto}</td>
-                <td>${cliente.email}</td>
-                <td><span class="badge badge-info">${cliente.totalPedidos}</span></td>
+                <td>${cliente.nombreCompleto || '-'}</td>
+                <td>${cliente.email || '-'}</td>
+                <td><span class="badge badge-info">${cliente.totalPedidos || 0}</span></td>
                 <td><strong>${totalComprado}</strong></td>
             </tr>
         `;
@@ -194,10 +198,10 @@ function mostrarTopClientes(data) {
     });
 }
 
-// Reporte por estado
+// Reporte por estado - URL corregida
 function cargarReportePorEstado() {
     $.ajax({
-        url: '/admin/reportes/api/pedidos-por-estado',
+        url: '/admin/reportes/api/pedidos/por-estado',
         method: 'GET',
         success: function(data) {
             mostrarReportePorEstado(data);
@@ -208,24 +212,31 @@ function cargarReportePorEstado() {
     });
 }
 
-// Mostrar reporte por estado
+// Mostrar reporte por estado - Adaptado para Map<String, Long>
 function mostrarReportePorEstado(data) {
     const tbody = $('#tablaEstados');
     tbody.empty();
 
-    if (data.length === 0) {
+    // El backend devuelve un Map {estado: cantidad}, convertir a array
+    const estados = Object.entries(data).map(([estado, cantidad]) => ({
+        estado: estado.toLowerCase(),
+        cantidad: cantidad
+    }));
+
+    if (estados.length === 0) {
         tbody.html('<tr><td colspan="2" class="empty-state">No hay datos disponibles</td></tr>');
         if (chartEstados) chartEstados.destroy();
         return;
     }
 
     // Tabla
-    data.forEach(item => {
+    estados.forEach(item => {
         let icon = '';
         switch(item.estado) {
             case 'pendiente': icon = '⏳'; break;
             case 'completado': icon = '✅'; break;
             case 'cancelado': icon = '❌'; break;
+            default: icon = '📋';
         }
 
         const fila = `
@@ -238,9 +249,9 @@ function mostrarReportePorEstado(data) {
     });
 
     // Gráfico circular
-    const labels = data.map(item => item.estado.charAt(0).toUpperCase() + item.estado.slice(1));
-    const valores = data.map(item => item.cantidad);
-    const colores = data.map(item => {
+    const labels = estados.map(item => item.estado.charAt(0).toUpperCase() + item.estado.slice(1));
+    const valores = estados.map(item => item.cantidad);
+    const colores = estados.map(item => {
         switch(item.estado) {
             case 'pendiente': return '#ffc107';
             case 'completado': return '#27ae60';
@@ -275,33 +286,44 @@ function mostrarReportePorEstado(data) {
     });
 }
 
-// Reporte por zona
+// Reporte por zona - URL corregida
 function cargarReportePorZona() {
-    $.ajax({
-        url: '/admin/reportes/api/ingresos-por-zona',
-        method: 'GET',
-        success: function(data) {
-            mostrarReportePorZona(data);
-        },
-        error: function() {
-            $('#tablaZonas').html('<tr><td colspan="3" class="empty-state">Error al cargar reporte</td></tr>');
-        }
+    // Cargar tanto ingresos como cantidad de pedidos por zona
+    Promise.all([
+        fetch('/admin/reportes/api/ingresos/por-zona').then(r => r.json()),
+        fetch('/admin/reportes/api/pedidos/por-zona').then(r => r.json())
+    ])
+    .then(([ingresos, pedidos]) => {
+        mostrarReportePorZona(ingresos, pedidos);
+    })
+    .catch(() => {
+        $('#tablaZonas').html('<tr><td colspan="3" class="empty-state">Error al cargar reporte</td></tr>');
     });
 }
 
-// Mostrar reporte por zona
-function mostrarReportePorZona(data) {
+// Mostrar reporte por zona - Adaptado para Map<String, BigDecimal>
+function mostrarReportePorZona(ingresosData, pedidosData) {
     const tbody = $('#tablaZonas');
     tbody.empty();
 
-    if (data.length === 0) {
+    // Convertir Maps a array combinado
+    const zonas = Object.entries(ingresosData).map(([zona, ingresos]) => ({
+        zona: zona || 'Sin especificar',
+        totalIngresos: ingresos || 0,
+        cantidadPedidos: pedidosData[zona] || 0
+    }));
+
+    if (zonas.length === 0) {
         tbody.html('<tr><td colspan="3" class="empty-state">No hay datos disponibles</td></tr>');
         if (chartZonas) chartZonas.destroy();
         return;
     }
 
+    // Ordenar por ingresos descendente
+    zonas.sort((a, b) => b.totalIngresos - a.totalIngresos);
+
     // Tabla
-    data.forEach(item => {
+    zonas.forEach(item => {
         const ingresos = new Intl.NumberFormat('es-PE', {
             style: 'currency',
             currency: 'PEN'
@@ -318,8 +340,8 @@ function mostrarReportePorZona(data) {
     });
 
     // Gráfico de barras
-    const labels = data.map(item => item.zona);
-    const valores = data.map(item => item.totalIngresos);
+    const labels = zonas.map(item => item.zona);
+    const valores = zonas.map(item => item.totalIngresos);
 
     if (chartZonas) chartZonas.destroy();
 
@@ -335,13 +357,12 @@ function mostrarReportePorZona(data) {
                     'rgba(102, 126, 234, 0.8)',
                     'rgba(118, 75, 162, 0.8)',
                     'rgba(255, 193, 7, 0.8)',
-                    'rgba(39, 174, 96, 0.8)'
+                    'rgba(39, 174, 96, 0.8)',
+                    'rgba(231, 76, 60, 0.8)',
+                    'rgba(52, 152, 219, 0.8)'
                 ],
                 borderColor: [
-                    '#667eea',
-                    '#764ba2',
-                    '#ffc107',
-                    '#27ae60'
+                    '#667eea', '#764ba2', '#ffc107', '#27ae60', '#e74c3c', '#3498db'
                 ],
                 borderWidth: 2
             }]
@@ -350,9 +371,7 @@ function mostrarReportePorZona(data) {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    display: false
-                }
+                legend: { display: false }
             },
             scales: {
                 y: {
@@ -368,7 +387,7 @@ function mostrarReportePorZona(data) {
     });
 }
 
-// Estilos adicionales
+// Estilos adicionales mejorados
 const style = document.createElement('style');
 style.textContent = `
     .btn-periodo {
@@ -394,40 +413,111 @@ style.textContent = `
     .reporte-section {
         background: white;
         padding: 25px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         margin-bottom: 20px;
+        border: 1px solid #e8e8e8;
     }
     .reporte-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 20px;
-        padding-bottom: 15px;
-        border-bottom: 2px solid #f0f0f0;
+        padding: 15px 20px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
     }
     .reporte-header h2 {
         margin: 0;
-        color: #1a1a2e;
-        font-size: 20px;
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 600;
     }
     .reporte-total {
         font-size: 24px;
         font-weight: bold;
-        color: #27ae60;
+        color: #4ade80;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
     }
     .reporte-body {
         display: flex;
         flex-direction: column;
         gap: 20px;
     }
-    .chart-container {
-        background: #f8f9fa;
-        padding: 20px;
+    .reporte-body table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
         border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .reporte-body table thead {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+    .reporte-body table th {
+        padding: 14px 16px;
+        text-align: left;
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .reporte-body table td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #374151;
+        font-size: 14px;
+    }
+    .reporte-body table tbody tr:hover {
+        background: #f8fafc;
+    }
+    .reporte-body table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    .chart-container {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
     }
     .tabla-reporte {
         overflow-x: auto;
+    }
+    .badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    .badge-info {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+    }
+    .badge-success {
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        color: white;
+    }
+    .badge-warning {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+    }
+    .badge-danger {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+    }
+    .empty-state {
+        text-align: center;
+        color: #9ca3af;
+        padding: 30px;
+        font-style: italic;
+    }
+    .loading {
+        text-align: center;
+        color: #6b7280;
+        padding: 20px;
     }
     @media (max-width: 1200px) {
         .reporte-body {

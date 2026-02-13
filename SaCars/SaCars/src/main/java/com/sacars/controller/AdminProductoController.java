@@ -10,15 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Controlador para CRUD de Productos (RQ1.8)
- * Gestión completa del catálogo de productos desde el panel administrativo
- */
+/*Controlador para CRUD de Productos*/
 @Controller
 @RequestMapping("/admin/productos")
 @RequiredArgsConstructor
@@ -26,19 +22,13 @@ public class AdminProductoController {
     
     private final AdminProductoService productoService;
     
-    /**
-     * Vista de gestión de productos
-     * GET /admin/productos
-     */
+    /*Vista de gestión de productos / GET /admin/productos */
     @GetMapping
     public String mostrarVistaProductos() {
         return "admin/productos";
     }
     
-    /**
-     * API: Listar todos los productos
-     * GET /admin/productos/api/listar
-     */
+    /* API: Listar todos los productos / GET /admin/productos/api/listar */
     @GetMapping("/api/listar")
     @ResponseBody
     public ResponseEntity<List<Producto>> listarProductos() {
@@ -50,10 +40,7 @@ public class AdminProductoController {
         }
     }
     
-    /**
-     * API: Listar solo productos activos
-     * GET /admin/productos/api/activos
-     */
+    /* API: Listar solo productos activos / GET /admin/productos/api/activos */
     @GetMapping("/api/activos")
     @ResponseBody
     public ResponseEntity<List<Producto>> listarProductosActivos() {
@@ -65,10 +52,7 @@ public class AdminProductoController {
         }
     }
     
-    /**
-     * API: Buscar productos por texto
-     * GET /admin/productos/api/buscar?q=texto
-     */
+    /* API: Buscar productos por texto / GET /admin/productos/api/buscar?q=texto */
     @GetMapping("/api/buscar")
     @ResponseBody
     public ResponseEntity<List<Producto>> buscarProductos(@RequestParam(required = false) String q) {
@@ -80,10 +64,7 @@ public class AdminProductoController {
         }
     }
     
-    /**
-     * API: Listar productos por categoría
-     * GET /admin/productos/api/categoria/{idCategoria}
-     */
+    /* API: Listar productos por categoría / GET /admin/productos/api/categoria/{idCategoria} */
     @GetMapping("/api/categoria/{idCategoria}")
     @ResponseBody
     public ResponseEntity<List<Producto>> listarPorCategoria(@PathVariable Long idCategoria) {
@@ -95,10 +76,7 @@ public class AdminProductoController {
         }
     }
     
-    /**
-     * API: Obtener producto por ID
-     * GET /admin/productos/api/{id}
-     */
+    /* API: Obtener producto por ID / GET /admin/productos/api/{id} */
     @GetMapping("/api/{id}")
     @ResponseBody
     public ResponseEntity<?> obtenerProducto(@PathVariable Long id) {
@@ -111,10 +89,7 @@ public class AdminProductoController {
         }
     }
     
-    /**
-     * API: Obtener productos con stock bajo
-     * GET /admin/productos/api/stock-bajo?cantidad=3
-     */
+    /* API: Obtener productos con stock bajo / GET /admin/productos/api/stock-bajo?cantidad=3 */
     @GetMapping("/api/stock-bajo")
     @ResponseBody
     public ResponseEntity<List<Producto>> obtenerStockBajo(
@@ -128,10 +103,7 @@ public class AdminProductoController {
         }
     }
     
-    /**
-     * API: Obtener productos sin stock
-     * GET /admin/productos/api/sin-stock
-     */
+    /* API: Obtener productos sin stock / GET /admin/productos/api/sin-stock */
     @GetMapping("/api/sin-stock")
     @ResponseBody
     public ResponseEntity<List<Producto>> obtenerSinStock() {
@@ -143,10 +115,7 @@ public class AdminProductoController {
         }
     }
     
-    /**
-     * API: Obtener estadísticas de inventario
-     * GET /admin/productos/api/estadisticas-inventario
-     */
+    /* API: Obtener estadísticas de inventario / GET /admin/productos/api/estadisticas-inventario */
     @GetMapping("/api/estadisticas-inventario")
     @ResponseBody
     public ResponseEntity<?> obtenerEstadisticasInventario() {
@@ -158,10 +127,7 @@ public class AdminProductoController {
         }
     }
     
-    /**
-     * API: Crear nuevo producto
-     * POST /admin/productos/api/crear
-     */
+    /* API: Crear nuevo producto / POST /admin/productos/api/crear */
     @PostMapping("/api/crear")
     @ResponseBody
     public ResponseEntity<?> crearProducto(@Valid @RequestBody ProductoFormDTO dto, BindingResult result) {
@@ -187,10 +153,7 @@ public class AdminProductoController {
         }
     }
     
-    /**
-     * API: Editar producto existente
-     * PUT /admin/productos/api/editar/{id}
-     */
+    /* API: Editar producto existente / PUT /admin/productos/api/editar/{id} */
     @PutMapping("/api/editar/{id}")
     @ResponseBody
     public ResponseEntity<?> editarProducto(
@@ -220,10 +183,7 @@ public class AdminProductoController {
         }
     }
     
-    /**
-     * API: Agregar stock a un producto (RQ1.9)
-     * PUT /admin/productos/api/agregar-stock/{id}
-     */
+    /* API: Agregar stock a un producto (RQ1.9) / PUT /admin/productos/api/agregar-stock/{id} */
     @PutMapping("/api/agregar-stock/{id}")
     @ResponseBody
     public ResponseEntity<?> agregarStock(
@@ -251,10 +211,7 @@ public class AdminProductoController {
         }
     }
     
-    /**
-     * API: Reducir stock de un producto
-     * PUT /admin/productos/api/reducir-stock/{id}
-     */
+    /* API: Reducir stock de un producto / PUT /admin/productos/api/reducir-stock/{id} */
     @PutMapping("/api/reducir-stock/{id}")
     @ResponseBody
     public ResponseEntity<?> reducirStock(
@@ -282,10 +239,7 @@ public class AdminProductoController {
         }
     }
     
-    /**
-     * API: Activar producto
-     * PUT /admin/productos/api/activar/{id}
-     */
+    /* API: Activar producto / PUT /admin/productos/api/activar/{id} */
     @PutMapping("/api/activar/{id}")
     @ResponseBody
     public ResponseEntity<?> activarProducto(@PathVariable Long id) {
@@ -301,10 +255,7 @@ public class AdminProductoController {
         }
     }
     
-    /**
-     * API: Desactivar producto (soft delete)
-     * PUT /admin/productos/api/desactivar/{id}
-     */
+    /* API: Desactivar producto (soft delete) / PUT /admin/productos/api/desactivar/{id} */
     @PutMapping("/api/desactivar/{id}")
     @ResponseBody
     public ResponseEntity<?> desactivarProducto(@PathVariable Long id) {
@@ -320,10 +271,7 @@ public class AdminProductoController {
         }
     }
     
-    /**
-     * API: Eliminar producto permanentemente
-     * DELETE /admin/productos/api/eliminar/{id}
-     */
+    /* API: Eliminar producto permanentemente / DELETE /admin/productos/api/eliminar/{id} */
     @DeleteMapping("/api/eliminar/{id}")
     @ResponseBody
     public ResponseEntity<?> eliminarProducto(@PathVariable Long id) {

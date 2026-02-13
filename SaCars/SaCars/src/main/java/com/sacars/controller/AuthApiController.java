@@ -49,8 +49,7 @@ public class AuthApiController {
                         "message", "Contraseña incorrecta"
                 ));
             }
-
-            // Respuesta login OK
+            
             Map<String, Object> data = new HashMap<>();
             data.put("usuario", usuario);
             data.put("token", "token-demo");
@@ -68,7 +67,7 @@ public class AuthApiController {
         }
     }
 
-    // ---------------- GENERAR HASH (TEMPORAL - SOLO PARA DESARROLLO) ----------------
+    // ---------------- Generar hash por siaca xd ----------------
     @GetMapping("/generar-hash")
     public ResponseEntity<?> generarHash(@RequestParam String password) {
         String hash = passwordEncoder.encode(password);
@@ -85,7 +84,7 @@ public class AuthApiController {
 
         String nombre = body.get("nombre");
         String apellido = body.get("apellido");
-        String dni = body.get("dni");  // ⬅ AGREGADO
+        String dni = body.get("dni");  
         String email = body.get("email");
         String telefono = body.get("telefono");
         String password = body.get("password");
@@ -100,7 +99,7 @@ public class AuthApiController {
         UsuarioRegistroDTO dto = new UsuarioRegistroDTO();
         dto.setNombre(nombre);
         dto.setApellido(apellido);
-        dto.setDni(dni);              // ⬅ AGREGADO
+        dto.setDni(dni);              
         dto.setEmail(email);
         dto.setTelefono(telefono);
         dto.setContrasena(password);

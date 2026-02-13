@@ -77,8 +77,8 @@ function actualizarEstadisticas(stats) {
     // Total clientes
     $('#total-clientes').text(stats.totalClientes || 0);
     
-    // Productos en stock (unidades totales)
-    $('#productos-stock').text(formatearNumero(stats.totalUnidadesStock || 0));
+    // Productos en stock (unidades totales) - Sin decimales porque es cantidad
+    $('#productos-stock').text(Number(stats.totalUnidadesStock || 0).toLocaleString('es-PE'));
     
     // Actualizar mensaje de nuevos clientes
     const nuevosClientes = stats.clientesNuevosUltimaSemana || 0;

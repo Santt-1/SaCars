@@ -27,7 +27,7 @@ public class CheckoutController {
 
     @PostMapping
     public ResponseEntity<?> finalizarCompra(@RequestBody CheckoutRequestDTO request) {
-        System.out.println("📦 REQUEST RECIBIDO:");
+        System.out.println("REQUEST RECIBIDO:");
         System.out.println("ID usuario: " + request.getIdUsuario());
         System.out.println("Items:");
         request.getItems().forEach(i -> {

@@ -10,15 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Controlador para CRUD de Usuarios (RQ1.5)
- * Gestión completa de usuarios desde el panel administrativo
- */
+/*Controlador para CRUD de Usuarios / Gestión completa de usuarios desde el panel administrativo*/
 @Controller
 @RequestMapping("/admin/usuarios")
 @RequiredArgsConstructor
@@ -26,19 +22,13 @@ public class AdminUsuarioController {
     
     private final AdminUsuarioService usuarioService;
     
-    /**
-     * Vista de gestión de usuarios
-     * GET /admin/usuarios
-     */
+    /* Vista de gestión de usuarios / GET /admin/usuarios */
     @GetMapping
     public String mostrarVistaUsuarios() {
         return "admin/usuarios";
     }
     
-    /**
-     * API: Listar todos los usuarios
-     * GET /admin/usuarios/api/listar
-     */
+    /* API: Listar todos los usuarios / GET /admin/usuarios/api/listar */
     @GetMapping("/api/listar")
     @ResponseBody
     public ResponseEntity<List<Usuario>> listarUsuarios() {
@@ -50,10 +40,7 @@ public class AdminUsuarioController {
         }
     }
     
-    /**
-     * API: Buscar usuarios por texto
-     * GET /admin/usuarios/api/buscar?q=texto
-     */
+    /* API: Buscar usuarios por texto / GET /admin/usuarios/api/buscar =texto */
     @GetMapping("/api/buscar")
     @ResponseBody
     public ResponseEntity<List<Usuario>> buscarUsuarios(@RequestParam(required = false) String q) {
@@ -65,10 +52,7 @@ public class AdminUsuarioController {
         }
     }
     
-    /**
-     * API: Obtener usuario por ID
-     * GET /admin/usuarios/api/{id}
-     */
+    /* API: Obtener usuario por ID / GET /admin/usuarios/api/{id} */
     @GetMapping("/api/{id}")
     @ResponseBody
     public ResponseEntity<?> obtenerUsuario(@PathVariable Long id) {
@@ -81,10 +65,7 @@ public class AdminUsuarioController {
         }
     }
     
-    /**
-     * API: Crear nuevo usuario
-     * POST /admin/usuarios/api/crear
-     */
+    /* API: Crear nuevo usuario / POST /admin/usuarios/api/crear*/
     @PostMapping("/api/crear")
     @ResponseBody
     public ResponseEntity<?> crearUsuario(@Valid @RequestBody UsuarioFormDTO dto, BindingResult result) {
@@ -110,10 +91,7 @@ public class AdminUsuarioController {
         }
     }
     
-    /**
-     * API: Editar usuario existente
-     * PUT /admin/usuarios/api/editar/{id}
-     */
+    /* API: Editar usuario existente / PUT /admin/usuarios/api/editar/{id} */
     @PutMapping("/api/editar/{id}")
     @ResponseBody
     public ResponseEntity<?> editarUsuario(
@@ -143,10 +121,7 @@ public class AdminUsuarioController {
         }
     }
     
-    /**
-     * API: Activar usuario
-     * PUT /admin/usuarios/api/activar/{id}
-     */
+    /* API: Activar usuario / PUT /admin/usuarios/api/activar/{id} */
     @PutMapping("/api/activar/{id}")
     @ResponseBody
     public ResponseEntity<?> activarUsuario(@PathVariable Long id) {
@@ -162,10 +137,7 @@ public class AdminUsuarioController {
         }
     }
     
-    /**
-     * API: Desactivar usuario (soft delete)
-     * PUT /admin/usuarios/api/desactivar/{id}
-     */
+    /* API: Desactivar usuario (soft delete) / PUT /admin/usuarios/api/desactivar/{id} */
     @PutMapping("/api/desactivar/{id}")
     @ResponseBody
     public ResponseEntity<?> desactivarUsuario(@PathVariable Long id) {
@@ -181,10 +153,7 @@ public class AdminUsuarioController {
         }
     }
     
-    /**
-     * API: Eliminar usuario permanentemente
-     * DELETE /admin/usuarios/api/eliminar/{id}
-     */
+    /* API: Eliminar usuario permanentemente / DELETE /admin/usuarios/api/eliminar/{id} */
     @DeleteMapping("/api/eliminar/{id}")
     @ResponseBody
     public ResponseEntity<?> eliminarUsuario(@PathVariable Long id) {
@@ -204,10 +173,7 @@ public class AdminUsuarioController {
         }
     }
     
-    /**
-     * API: Cambiar contraseña de usuario
-     * PUT /admin/usuarios/api/cambiar-contrasena/{id}
-     */
+    /* API: Cambiar contraseña de usuario / PUT /admin/usuarios/api/cambiar-contrasena/{id} */
     @PutMapping("/api/cambiar-contrasena/{id}")
     @ResponseBody
     public ResponseEntity<?> cambiarContrasena(

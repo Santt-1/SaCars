@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Controlador para el Dashboard Administrativo (RQ1.4)
- * Proporciona vistas y APIs para estadísticas del panel admin
- */
+/* Controlador para el Dashboard Administrativo*/
 @Controller
 @RequestMapping("/admin")
 @RequiredArgsConstructor
@@ -28,28 +25,19 @@ public class AdminDashboardController {
     private final AdminDashboardService dashboardService;
     private final UsuarioService usuarioService;
     
-    /**
-     * Vista del login administrativo
-     * GET /admin/login
-     */
+    /* Vista del login administrativo*/
     @GetMapping("/login")
     public String mostrarLoginAdmin() {
         return "admin/login";
     }
     
-    /**
-     * Vista del dashboard administrativo
-     * GET /admin/dashboard
-     */
+    /*Vista del dashboard administrativo / GET /admin/dashboard */
     @GetMapping("/dashboard")
     public String mostrarDashboard() {
         return "admin/dashboard";
     }
     
-    /**
-     * API: Obtener usuario actual autenticado
-     * GET /admin/api/usuario-actual
-     */
+    /* API: Obtener usuario actual autenticado */
     @GetMapping("/api/usuario-actual")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> obtenerUsuarioActual() {
@@ -70,11 +58,7 @@ public class AdminDashboardController {
             return ResponseEntity.status(401).build();
         }
     }
-    
-    /**
-     * API: Obtener estadísticas del dashboard
-     * GET /admin/api/estadisticas
-     */
+    /* API: Obtener estadísticas del dashboard */
     @GetMapping("/api/estadisticas")
     @ResponseBody
     public ResponseEntity<EstadisticasDTO> obtenerEstadisticas() {

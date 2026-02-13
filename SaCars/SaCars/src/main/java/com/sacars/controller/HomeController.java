@@ -22,7 +22,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        return "index"; // ← Página principal
+        return "index"; 
     }
     
     @GetMapping("/carrito")
