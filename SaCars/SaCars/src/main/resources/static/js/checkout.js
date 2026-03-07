@@ -2,7 +2,7 @@ $(document).ready(function () {
 
     // ---------------------- AUTOCARGAR DATOS DEL USUARIO ----------------------
     function cargarUsuario() {
-        const usuarioLocal = JSON.parse(localStorage.getItem("usuario"));
+        const usuarioLocal = JSON.parse(localStorage.getItem("cliente_usuario"));
         if (!usuarioLocal) {
             alert("Debes iniciar sesión para comprar.");
             window.location.href = "/auth/login";
@@ -37,7 +37,7 @@ $(document).ready(function () {
                     dni: usuarioBackend.dni ?? usuarioBackend.dni
                 };
                 // actualizar localStorage para sincronizar con cambios de perfil
-                localStorage.setItem("usuario", JSON.stringify(usuario));
+                localStorage.setItem("cliente_usuario", JSON.stringify(usuario));
 
                 console.log("Usuario desde backend:", usuario);
                 $("#nombre").val(usuario.nombre + " " + usuario.apellido);
@@ -89,18 +89,51 @@ $(document).ready(function () {
     cargarDatosCheckout();
 
 
+    // ---------------------- MÉTODOS DE PAGO -----------------------------------
+    // Mostrar/ocultar sección de Yape/Plin según selección
+    $('input[name="metodo-pago"]').on("change", function() {
+        const metodoPago = $(this).val();
+        if (metodoPago === "Yape/Plin") {
+            $("#seccion-yape-plin").slideDown(300);
+        } else {
+            $("#seccion-yape-plin").slideUp(300);
+            // Limpiar el input de archivo
+            $("#comprobante-pago").val('');
+            $("#preview-comprobante").hide();
+        }
+    });
+
+    // Preview de imagen del comprobante
+    $("#comprobante-pago").on("change", function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                $("#img-preview").attr("src", e.target.result);
+                $("#preview-comprobante").show();
+            };
+            reader.readAsDataURL(file);
+        } else {
+            $("#preview-comprobante").hide();
+        }
+    });
+
+
     // ---------------------------- MOSTRAR PRODUCTOS ---------------------------
     function mostrarProductosCheckout(carrito) {
         const contenedor = $("#checkout-productos");
         contenedor.empty();
 
         carrito.forEach(producto => {
+            const cantidad = producto.cantidad || 1;
+            const precioTotal = producto.precio * cantidad;
             const item = `
                 <div class="checkout-producto-item">
                     <img src="${producto.imagen}" alt="${producto.titulo}">
                     <div class="checkout-producto-info">
                         <h4>${producto.titulo}</h4>
-                        <p class="checkout-producto-precio">S/ ${producto.precio.toFixed(2)}</p>
+                        <p class="checkout-producto-cantidad">Cantidad: ${cantidad}</p>
+                        <p class="checkout-producto-precio">S/ ${precioTotal.toFixed(2)}</p>
                     </div>
                 </div>
             `;
@@ -111,7 +144,10 @@ $(document).ready(function () {
 
     // ---------------------------- MOSTRAR TOTALES -----------------------------
     function mostrarTotalesCheckout(carrito, costoEnvio, zonaEnvio) {
-        const subtotal = carrito.reduce((total, producto) => total + producto.precio, 0);
+        const subtotal = carrito.reduce((total, producto) => {
+            const cantidad = producto.cantidad || 1;
+            return total + (producto.precio * cantidad);
+        }, 0);
         const total = subtotal + costoEnvio;
 
         $("#checkout-subtotal").text(`S/ ${subtotal.toFixed(2)}`);
@@ -131,19 +167,31 @@ $(document).ready(function () {
         e.preventDefault();
 
         const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-        const usuario = JSON.parse(localStorage.getItem("usuario"));
+        const usuario = JSON.parse(localStorage.getItem("cliente_usuario"));
         const zonaEnvio = localStorage.getItem("zonaEnvio") || "No definida";
         const costoEnvio = parseFloat(localStorage.getItem("costoEnvio")) || 0;
 
         const direccion = $("#direccion").val().trim();
         const comentarios = $("#comentarios").val().trim();
+        const metodoPago = $('input[name="metodo-pago"]:checked').val();
 
         if (!direccion) {
             alert("Por favor ingresa una dirección.");
             return;
         }
 
+        // Validar comprobante si es Yape/Plin
+        const comprobanteFile = $("#comprobante-pago")[0].files[0];
+        if (metodoPago === "Yape/Plin" && !comprobanteFile) {
+            alert("Por favor sube la captura del comprobante de pago.");
+            return;
+        }
+
         const codigoPostal = codigosPostales[zonaEnvio] || "00000";
+
+        // Calcular subtotal considerando cantidades
+        const subtotal = carrito.reduce((t, p) => t + (p.precio * (p.cantidad || 1)), 0);
+        const total = subtotal + costoEnvio;
 
         const checkoutData = {
             idUsuario: usuario.id,
@@ -151,15 +199,15 @@ $(document).ready(function () {
             ciudadEnvio: zonaEnvio,
             codigoPostal: codigoPostal,
 
-            metodoPago: "Contra entrega",
+            metodoPago: metodoPago,
             costoEnvio: costoEnvio,
 
-            subtotal: carrito.reduce((t, p) => t + p.precio, 0),
-            total: carrito.reduce((t, p) => t + p.precio, 0) + costoEnvio,
+            subtotal: subtotal,
+            total: total,
             dniCliente: usuario.dni,
             items: carrito.map(p => ({
                 idProducto: p.id,
-                cantidad: 1,
+                cantidad: p.cantidad || 1,
                 precioUnitario: p.precio
             }))
         };
@@ -184,40 +232,42 @@ $(document).ready(function () {
         }
 
         if (!respuesta.success) {
-            alert("Error al procesar el pedido.");
+            alert("Error al procesar el pedido: " + (respuesta.message || ""));
             return;
         }
 
+        // ---------------------- SUBIR COMPROBANTE SI ES YAPE/PLIN --------------
+        if (metodoPago === "Yape/Plin" && comprobanteFile) {
+            const formData = new FormData();
+            formData.append("file", comprobanteFile);
 
-        // ------------------------------ MENSAJE WHATSAPP -----------------------
-        let mensaje = `🧾 *PEDIDO REALIZADO*\n`;
-        mensaje += `Factura: ${respuesta.numeroFactura}\n\n`;
-        mensaje += `📍 Dirección: ${direccion}\n`;
-        mensaje += `🚚 Zona de envío: ${zonaEnvio}\n`;
-        mensaje += `💵 Costo de envío: S/ ${costoEnvio.toFixed(2)}\n\n`;
+            try {
+                const resComprobante = await fetch(`http://localhost:8082/api/checkout/comprobante/${respuesta.idPedido}`, {
+                    method: "POST",
+                    body: formData
+                });
 
-        mensaje += `📦 *PRODUCTOS:*\n`;
-        carrito.forEach((p, i) => {
-            mensaje += `${i + 1}. ${p.titulo} - S/ ${p.precio.toFixed(2)}\n`;
-        });
-
-        const subtotal = carrito.reduce((t, p) => t + p.precio, 0);
-        mensaje += `\n💰 *RESUMEN:*\n`;
-        mensaje += `Subtotal: S/ ${subtotal.toFixed(2)}\n`;
-        mensaje += `Envío: S/ ${costoEnvio.toFixed(2)}\n`;
-        mensaje += `*TOTAL: S/ ${(checkoutData.total).toFixed(2)}*\n`;
-
-        if (comentarios) {
-            mensaje += `\n📝 Comentarios: ${comentarios}`;
+                const comprobanteResp = await resComprobante.json();
+                if (!comprobanteResp.success) {
+                    console.warn("No se pudo subir el comprobante:", comprobanteResp.message);
+                }
+            } catch (err) {
+                console.warn("Error al subir comprobante:", err);
+            }
         }
 
-        const whatsappURL = `https://wa.me/51918341898?text=${encodeURIComponent(mensaje)}`;
-        window.open(whatsappURL, "_blank");
-
-        alert("Pedido realizado con éxito.");
-
+        // ---------------------- LIMPIAR Y REDIRIGIR ----------------------------
         localStorage.removeItem("carrito");
-        window.location.href = "/catalogo";
+        
+        // Mostrar mensaje de éxito
+        if (metodoPago === "Yape/Plin") {
+            alert("¡Pedido realizado con éxito!\n\nTu comprobante de pago ha sido enviado y está pendiente de verificación.\n\nSerás redirigido a tu perfil donde podrás ver el estado de tu pedido.");
+        } else {
+            alert("¡Pedido realizado con éxito!\n\nRecuerda tener el dinero listo para el pago contra entrega.\n\nSerás redirigido a tu perfil donde podrás ver el estado de tu pedido.");
+        }
+
+        // Redirigir al perfil del cliente (pestaña de pedidos)
+        window.location.href = "/perfil#pedidos";
     });
 
 

@@ -1,14 +1,14 @@
-// auth-check.js - Controla qué se muestra según autenticación
+// auth-check.js - Controla qué se muestra según autenticación (CLIENTE)
 $(document).ready(function () {
     verificarAutenticacion();
 });
 
 function verificarAutenticacion() {
-    const token = localStorage.getItem('token');
-    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    const token = localStorage.getItem('cliente_token');
+    const usuario = JSON.parse(localStorage.getItem('cliente_usuario') || '{}');
 
-    if (token && usuario) {
-        // USUARIO LOGUEADO - Mostrar funcionalidades completas
+    if (token && usuario && usuario.nombre) {
+        // CLIENTE LOGUEADO - Mostrar funcionalidades completas
         $('#usuario-conectado').show();
 
         // LIMITAR NOMBRE A 15 CARACTERES
@@ -40,7 +40,7 @@ function verificarAutenticacion() {
 
 function actualizarContadorCarrito() {
     const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
-    const contador = carrito.reduce((total, item) => total + item.cantidad, 0);
+    const contador = carrito.reduce((total, item) => total + (item.cantidad || 1), 0);
 
     // Crear o actualizar contador
     let $contador = $('.contador-carrito');
@@ -52,11 +52,11 @@ function actualizarContadorCarrito() {
     $contador.text(contador).toggle(contador > 0);
 }
 
-// Logout
+// Logout de CLIENTE
 $('#btn-logout').click(function (e) {
     e.preventDefault();
-    localStorage.removeItem('token');
-    localStorage.removeItem('usuario');
+    localStorage.removeItem('cliente_token');
+    localStorage.removeItem('cliente_usuario');
     localStorage.removeItem('carrito');
     window.location.href = '/';
 });

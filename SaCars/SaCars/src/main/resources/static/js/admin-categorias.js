@@ -46,7 +46,7 @@ $(document).ready(function() {
 
 // Verificar autenticación
 function verificarAutenticacionAdmin() {
-    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    const usuario = JSON.parse(localStorage.getItem('admin_usuario') || '{}');
     
     if (!usuario.correo || usuario.rol !== 'administrador') {
         window.location.href = '/admin/login';

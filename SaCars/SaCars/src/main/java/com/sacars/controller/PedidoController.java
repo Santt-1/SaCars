@@ -30,6 +30,8 @@ public class PedidoController {
             m.put("total", p.getTotal());
             m.put("direccion", p.getDireccionEnvio());
             m.put("zona", p.getCiudadEnvio());
+            m.put("metodoPago", p.getMetodoPago());
+            m.put("pagoVerificado", p.getPagoVerificado());
             resultado.add(m);
         }
         return ResponseEntity.ok(resultado);
@@ -48,6 +50,9 @@ public class PedidoController {
         m.put("total", p.getTotal());
         m.put("direccion", p.getDireccionEnvio());
         m.put("zona", p.getCiudadEnvio());
+        m.put("metodoPago", p.getMetodoPago());
+        m.put("pagoVerificado", p.getPagoVerificado());
+        m.put("motivoCancelacion", p.getMotivoCancelacion());
         
         List<Map<String, Object>> items = new ArrayList<>();
         for (DetallePedido d : p.getDetalles()) {

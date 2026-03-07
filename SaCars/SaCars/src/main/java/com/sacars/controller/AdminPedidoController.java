@@ -177,9 +177,15 @@ public class AdminPedidoController {
     /* API: Cancelar pedido / PUT /admin/pedidos/api/cancelar/{id} */
     @PutMapping("/api/cancelar/{id}")
     @ResponseBody
-    public ResponseEntity<?> cancelarPedido(@PathVariable Long id) {
+    public ResponseEntity<?> cancelarPedido(@PathVariable Long id, @RequestBody Map<String, String> request) {
         try {
-            Pedido pedido = pedidoService.cancelarPedido(id);
+            String motivo = request.get("motivo");
+            if (motivo == null || motivo.trim().isEmpty()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Debe proporcionar un motivo de cancelación");
+                return ResponseEntity.badRequest().body(error);
+            }
+            Pedido pedido = pedidoService.cancelarPedido(id, motivo);
             return ResponseEntity.ok(pedido);
         } catch (IllegalArgumentException | IllegalStateException e) {
             Map<String, String> error = new HashMap<>();
@@ -248,6 +254,30 @@ public class AdminPedidoController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
+        }
+    }
+    
+    /* API: Verificar pago de pedido / PUT /admin/pedidos/api/verificar-pago/{id} */
+    @PutMapping("/api/verificar-pago/{id}")
+    @ResponseBody
+    public ResponseEntity<?> verificarPago(@PathVariable Long id) {
+        try {
+            Pedido pedido = pedidoService.verificarPago(id);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Pago verificado correctamente");
+            response.put("idPedido", pedido.getId());
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("error", "Error al verificar pago: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(error);
         }
     }
 }

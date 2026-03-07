@@ -50,6 +50,14 @@ public class AuthApiController {
                 ));
             }
             
+            // VALIDACIÓN: Usuario debe estar activo
+            if (!usuario.isActivo()) {
+                return ResponseEntity.badRequest().body(Map.of(
+                        "success", false,
+                        "message", "Tu cuenta está desactivada. Contacta al administrador."
+                ));
+            }
+            
             Map<String, Object> data = new HashMap<>();
             data.put("usuario", usuario);
             data.put("token", "token-demo");

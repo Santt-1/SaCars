@@ -1,25 +1,24 @@
-// Verificar si el usuario está autenticado
+// Verificar si el usuario está autenticado como cliente
 $(document).ready(function() {
-    const token = localStorage.getItem('token');
-    const rol = localStorage.getItem('rol');
-    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    const token = localStorage.getItem('cliente_token');
+    const usuario = JSON.parse(localStorage.getItem('cliente_usuario') || '{}');
 
     // Redirigir si no está autenticado
-    if (!token || rol !== 'cliente') {
-        window.location.href = '../login.html';
+    if (!token || usuario.rol !== 'cliente') {
+        window.location.href = '/auth/login';
         return;
     }
 
     // Mostrar datos del usuario
     $('#usuario-nombre').text(usuario.nombre || 'Cliente');
-    $('#user-email').text(usuario.email || 'usuario@email.com');
+    $('#user-email').text(usuario.correo || 'usuario@email.com');
 
     // Cargar datos del dashboard
     cargarDatosCliente();
 });
 
 function cargarDatosCliente() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('cliente_token');
 
     $.ajax({
         type: 'GET',
@@ -38,8 +37,7 @@ function cargarDatosCliente() {
 }
 
 function cerrarSesion() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('rol');
-    localStorage.removeItem('usuario');
-    window.location.href = '../login.html';
+    localStorage.removeItem('cliente_token');
+    localStorage.removeItem('cliente_usuario');
+    window.location.href = '/';
 }

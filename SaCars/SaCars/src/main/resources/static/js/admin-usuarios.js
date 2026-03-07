@@ -264,7 +264,7 @@ function cerrarModal() {
  * Verificar autenticación admin
  */
 function verificarAutenticacionAdmin() {
-    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    const usuario = JSON.parse(localStorage.getItem('admin_usuario') || '{}');
     
     if (!usuario.correo || usuario.rol !== 'administrador') {
         window.location.href = '/admin/login';
@@ -279,9 +279,9 @@ function verificarAutenticacionAdmin() {
  */
 function cerrarSesionAdmin() {
     if (confirm('¿Está seguro que desea cerrar sesión?')) {
-        localStorage.removeItem('usuario');
-        localStorage.removeItem('token');
-        window.location.href = '/';
+        localStorage.removeItem('admin_usuario');
+        localStorage.removeItem('admin_token');
+        window.location.href = '/admin/login';
     }
 }
 

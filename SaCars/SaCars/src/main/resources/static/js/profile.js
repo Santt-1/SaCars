@@ -2,7 +2,7 @@ $(document).ready(function () {
 
     // Obtiene usuario desde localStorage
     function getUsuarioLocal() {
-        return JSON.parse(localStorage.getItem("usuario"));
+        return JSON.parse(localStorage.getItem("cliente_usuario"));
     }
 
     // Cargar perfil desde backend y rellenar formulario
@@ -35,7 +35,7 @@ $(document).ready(function () {
                 correo: usuario.correo,
                 dni: usuario.dni
             };
-            localStorage.setItem("usuario", JSON.stringify(sync));
+            localStorage.setItem("cliente_usuario", JSON.stringify(sync));
         } catch (err) {
             console.error(err);
             alert("No se pudo cargar el perfil.");
@@ -80,7 +80,7 @@ $(document).ready(function () {
                 correo: actualizado.correo ?? payload.correo,
                 dni: actualizado.dni ?? payload.dni
             };
-            localStorage.setItem("usuario", JSON.stringify(nuevo));
+            localStorage.setItem("cliente_usuario", JSON.stringify(nuevo));
             alert("Perfil actualizado correctamente.");
         } catch (err) {
             console.error(err);

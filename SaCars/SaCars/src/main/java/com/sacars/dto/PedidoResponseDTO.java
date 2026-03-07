@@ -25,6 +25,9 @@ public class PedidoResponseDTO {
     private String estado;
     private BigDecimal total;
     private String metodoPago;
+    private String comprobantePago;
+    private Boolean pagoVerificado;
+    private String motivoCancelacion;
     
     // Información de envío
     private String direccionEnvio;
@@ -54,6 +57,9 @@ public class PedidoResponseDTO {
         dto.setEstado(pedido.getEstado());
         dto.setTotal(pedido.getTotal());
         dto.setMetodoPago(pedido.getMetodoPago());
+        dto.setComprobantePago(pedido.getComprobantePago());
+        dto.setPagoVerificado(pedido.getPagoVerificado());
+        dto.setMotivoCancelacion(pedido.getMotivoCancelacion());
         dto.setDireccionEnvio(pedido.getDireccionEnvio());
         dto.setCiudadEnvio(pedido.getCiudadEnvio());
         dto.setCodigoPostal(pedido.getCodigoPostal());

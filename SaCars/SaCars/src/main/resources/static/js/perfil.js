@@ -3,7 +3,7 @@ $(function () {
     // Helpers
     function getUsuarioLocal() {
         try {
-            return JSON.parse(localStorage.getItem("usuario"));
+            return JSON.parse(localStorage.getItem("cliente_usuario"));
         } catch (e) {
             return null;
         }
@@ -35,7 +35,8 @@ $(function () {
 
         $("#btn-logout").off("click").on("click", function (e) {
             e.preventDefault();
-            localStorage.removeItem("usuario");
+            localStorage.removeItem("cliente_usuario");
+            localStorage.removeItem("cliente_token");
             // opcional: limpiar carrito
             // localStorage.removeItem("carrito");
             window.location.href = "/";
@@ -54,6 +55,18 @@ $(function () {
             $("#tab-pedidos").addClass("activo");
         }
     });
+
+    // Activar pestaña según hash de URL
+    function activarPestanaPorHash() {
+        const hash = window.location.hash;
+        if (hash === '#pedidos') {
+            $(".perfil-tab-btn").removeClass("activo");
+            $(".perfil-tab-btn[data-tab='pedidos']").addClass("activo");
+            $(".perfil-seccion").removeClass("activo");
+            $("#tab-pedidos").addClass("activo");
+        }
+    }
+    activarPestanaPorHash();
 
     // Cargar perfil desde backend
     async function cargarPerfil() {
@@ -86,7 +99,7 @@ $(function () {
                 correo: usuario.correo ?? usuario.email,
                 dni: usuario.dni
             };
-            localStorage.setItem("usuario", JSON.stringify(sync));
+            localStorage.setItem("cliente_usuario", JSON.stringify(sync));
             initAuthUI();
         } catch (err) {
             console.error(err);
@@ -141,7 +154,7 @@ $(function () {
                 correo: actualizado.correo ?? payload.correo,
                 dni: actualizado.dni ?? payload.dni
             };
-            localStorage.setItem("usuario", JSON.stringify(nuevo));
+            localStorage.setItem("cliente_usuario", JSON.stringify(nuevo));
             showAlerta("exito", "Perfil actualizado correctamente.");
             initAuthUI();
         } catch (err) {
@@ -180,10 +193,11 @@ $(function () {
     function mapEstadoClass(estado) {
         if (!estado) return "estado-pendiente";
         const e = estado.toString().toLowerCase();
+        if (e.includes("cancel")) return "estado-cancelado";
         if (e.includes("pend")) return "estado-pendiente";
         if (e.includes("proc") || e.includes("proces")) return "estado-procesando";
         if (e.includes("env") || e.includes("enviado")) return "estado-enviado";
-        if (e.includes("entreg") || e.includes("entregado")) return "estado-entregado";
+        if (e.includes("entreg") || e.includes("entregado") || e.includes("complet")) return "estado-entregado";
         return "estado-pendiente";
     }
 
@@ -227,10 +241,14 @@ $(function () {
         $("#modal-factura").text("Cargando...");
         $("#modal-fecha").text("");
         $("#modal-estado").text("");
+        $("#modal-metodo-pago").text("");
         $("#modal-direccion").text("");
         $("#modal-zona").text("");
         $("#modal-productos").empty();
         $("#modal-total").text("");
+        $("#modal-estado-pago").hide();
+        $("#badge-pago-verificado").hide();
+        $("#badge-pago-pendiente").hide();
 
         try {
             const res = await fetch(`http://localhost:8082/api/pedidos/${pedidoId}`);
@@ -240,8 +258,30 @@ $(function () {
             $("#modal-factura").text(p.numeroFactura ?? p.id ?? "-");
             $("#modal-fecha").text(new Date(p.fechaCreacion || p.fecha || Date.now()).toLocaleString());
             $("#modal-estado").text(p.estado ?? p.estadoPedido ?? "Pendiente");
+            
+            // Mostrar motivo de cancelación si existe
+            if (p.estado === "CANCELADO" && p.motivoCancelacion) {
+                $("#modal-motivo-cancelacion").show();
+                $("#motivo-cancelacion-texto").text(p.motivoCancelacion);
+            } else {
+                $("#modal-motivo-cancelacion").hide();
+            }
+            
+            $("#modal-metodo-pago").text(p.metodoPago ?? "No especificado");
             $("#modal-direccion").text(p.direccionEnvio ?? p.direccion ?? "-");
             $("#modal-zona").text(p.ciudadEnvio ?? p.zona ?? "-");
+
+            // Mostrar estado de pago si es Yape/Plin
+            if (p.metodoPago === "Yape/Plin") {
+                $("#modal-estado-pago").show();
+                if (p.pagoVerificado) {
+                    $("#badge-pago-verificado").show();
+                    $("#badge-pago-pendiente").hide();
+                } else {
+                    $("#badge-pago-verificado").hide();
+                    $("#badge-pago-pendiente").show();
+                }
+            }
 
             const items = p.items ?? p.detalle ?? [];
             if (!Array.isArray(items) || items.length === 0) {

@@ -9,10 +9,10 @@ jQuery(document).ready(function ($) {
     console.log("📝 Formulario encontrado:", $("#admin-login-form").length > 0 ? "SÍ" : "NO");
 
     // Verificar si ya hay sesión activa de admin
-    const usuarioActual = localStorage.getItem("usuario");
-    if (usuarioActual) {
+    const adminUsuario = localStorage.getItem("admin_usuario");
+    if (adminUsuario) {
         try {
-            const user = JSON.parse(usuarioActual);
+            const user = JSON.parse(adminUsuario);
             if (user.rol === 'administrador') {
                 console.log("Admin ya autenticado, redirigiendo...");
                 window.location.href = "/admin/dashboard";
@@ -20,7 +20,8 @@ jQuery(document).ready(function ($) {
             }
         } catch (e) {
             console.error("Error al parsear usuario:", e);
-            localStorage.clear();
+            localStorage.removeItem('admin_usuario');
+            localStorage.removeItem('admin_token');
         }
     }
 
@@ -38,14 +39,14 @@ jQuery(document).ready(function ($) {
 
         // Validación básica
         if (!email || !password) {
-            $("#admin-login-error").text("Por favor completa todos los campos");
+            $("#admin-login-error").text("Por favor completa todos los campos").addClass('show');
             return;
         }
 
         console.log("Enviando credenciales admin:", email);
 
         // Limpiar mensaje de error previo
-        $("#admin-login-error").text("");
+        $("#admin-login-error").text("").removeClass('show');
 
         $.ajax({
             type: "POST",
@@ -64,21 +65,20 @@ jQuery(document).ready(function ($) {
                     // VALIDACIÓN CRÍTICA: Solo administradores pueden acceder
                     if (u.rol !== 'administrador') {
                         console.warn("⛔ Acceso denegado: Usuario no es administrador");
-                        $("#admin-login-error").text("Acceso denegado. Esta sección es solo para administradores.");
+                        $("#admin-login-error").html(
+                            '<span style="color: #e74c3c;">⛔ Acceso denegado. Esta sección es solo para administradores. ' +
+                            '<a href="/auth/login" style="color: #ffc107; font-weight: bold;">Ir al login de clientes</a></span>'
+                        ).addClass('show');
                         
-                        // Opcional: Redirigir a login de clientes
-                        setTimeout(function() {
-                            window.location.href = "/auth/login";
-                        }, 2000);
-                        
+                        // NO redirigir automáticamente
                         return;
                     }
 
-                    // Guardar token
-                    localStorage.setItem("token", response.data.token);
+                    // Guardar token de admin
+                    localStorage.setItem("admin_token", response.data.token);
 
-                    // Guardar usuario en localStorage
-                    localStorage.setItem("usuario", JSON.stringify({
+                    // Guardar usuario admin en localStorage (key separada)
+                    localStorage.setItem("admin_usuario", JSON.stringify({
                         id: u.idUsuario,
                         nombre: u.nombre,
                         apellido: u.apellido,
@@ -97,7 +97,7 @@ jQuery(document).ready(function ($) {
 
                 } else {
                     console.error("❌ Login fallido:", response.message);
-                    $("#admin-login-error").text(response.message || "Credenciales incorrectas");
+                    $("#admin-login-error").text(response.message || "Credenciales incorrectas").addClass('show');
                 }
             },
 
@@ -112,7 +112,7 @@ jQuery(document).ready(function ($) {
                     mensaje = xhr.responseJSON.message || mensaje;
                 }
 
-                $("#admin-login-error").text(mensaje);
+                $("#admin-login-error").text(mensaje).addClass('show');
             },
         });
     });

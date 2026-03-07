@@ -1,24 +1,23 @@
 // Verificar si el usuario está autenticado como admin
 $(document).ready(function() {
-    const token = localStorage.getItem('token');
-    const rol = localStorage.getItem('rol');
-    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    const token = localStorage.getItem('admin_token');
+    const usuario = JSON.parse(localStorage.getItem('admin_usuario') || '{}');
 
     // Redirigir si no está autenticado como admin
-    if (!token || rol !== 'admin') {
-        window.location.href = '../login.html';
+    if (!token || usuario.rol !== 'administrador') {
+        window.location.href = '/admin/login';
         return;
     }
 
     // Mostrar datos del admin
-    $('#admin-email').text(usuario.email || 'admin@sacars.com');
+    $('#admin-email').text(usuario.correo || 'admin@sacars.com');
 
     // Cargar datos del dashboard
     cargarDatosAdmin();
 });
 
 function cargarDatosAdmin() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('admin_token');
 
     $.ajax({
         type: 'GET',
@@ -38,8 +37,7 @@ function cargarDatosAdmin() {
 }
 
 function cerrarSesionAdmin() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('rol');
-    localStorage.removeItem('usuario');
-    window.location.href = '../login.html';
+    localStorage.removeItem('admin_token');
+    localStorage.removeItem('admin_usuario');
+    window.location.href = '/admin/login';
 }

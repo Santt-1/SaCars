@@ -56,7 +56,7 @@ $(document).ready(function() {
 
     // Función para verificar autenticación antes de acciones
     function verificarYRedirigir() {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('cliente_token');
         if (!token) {
             window.location.href = '/auth/login';
             return false;

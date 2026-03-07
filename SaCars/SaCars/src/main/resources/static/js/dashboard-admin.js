@@ -19,7 +19,7 @@ $(document).ready(function() {
  * Verifica que el usuario sea administrador
  */
 function verificarAutenticacionAdmin() {
-    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    const usuario = JSON.parse(localStorage.getItem('admin_usuario') || '{}');
     const adminEmail = document.getElementById('admin-email');
     
     if (!usuario.correo || usuario.rol !== 'administrador') {
@@ -194,9 +194,9 @@ function completarPedido(idPedido) {
  */
 function cerrarSesionAdmin() {
     if (confirm('¿Está seguro que desea cerrar sesión?')) {
-        localStorage.removeItem('usuario');
-        localStorage.removeItem('token');
-        window.location.href = '/';
+        localStorage.removeItem('admin_usuario');
+        localStorage.removeItem('admin_token');
+        window.location.href = '/admin/login';
     }
 }
 

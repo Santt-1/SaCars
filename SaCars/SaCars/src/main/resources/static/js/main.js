@@ -46,7 +46,7 @@ $(document).ready(function(){
 
 // FUNCIÓN PARA VERIFICAR AUTENTICACIÓN Y REDIRIGIR
 function verificarYRedirigir() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('cliente_token');
     if (!token) {
         window.location.href = '/auth/login';
         return false;
@@ -238,14 +238,17 @@ $(document).ready(function () {
 
       let total = 0;
       carrito.forEach((producto, index) => {
-        total += producto.precio;
+        const cantidad = producto.cantidad || 1;
+        const precioTotal = producto.precio * cantidad;
+        total += precioTotal;
 
         const item = `
           <div class="carrito-item">
             <img src="${producto.imagen}" alt="${producto.titulo}">
             <div class="carrito-item-info">
               <h4>${producto.titulo}</h4>
-              <p>S/ ${producto.precio.toFixed(2)}</p>
+              <p class="carrito-cantidad">Cantidad: ${cantidad}</p>
+              <p>S/ ${precioTotal.toFixed(2)}</p>
             </div>
             <button class="eliminar-item" data-index="${index}">🗑️</button>
           </div>
@@ -328,8 +331,8 @@ $(document).ready(function() {
 
 // Funciones de autenticación
 function verificarAutenticacion() {
-    const usuario = localStorage.getItem('usuario');
-    const token = localStorage.getItem('token');
+    const usuario = localStorage.getItem('cliente_usuario');
+    const token = localStorage.getItem('cliente_token');
 
     if (usuario && token) {
         try {
@@ -378,9 +381,9 @@ function cerrarSesion() {
 }
 
 function limpiarSesion() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('usuario');
-    localStorage.removeItem('rol');
+    localStorage.removeItem('cliente_token');
+    localStorage.removeItem('cliente_usuario');
+    localStorage.removeItem('carrito');
 }
 // Función para mostrar solo el primer nombre - VERSIÓN MEJORADA
 function mostrarPrimerNombre() {
@@ -416,8 +419,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // También ejecutar después de la verificación de autenticación
 function verificarAutenticacion() {
-    const usuario = localStorage.getItem('usuario');
-    const token = localStorage.getItem('token');
+    const usuario = localStorage.getItem('cliente_usuario');
+    const token = localStorage.getItem('cliente_token');
 
     if (usuario && token) {
         try {

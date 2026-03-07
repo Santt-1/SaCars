@@ -38,10 +38,11 @@ public class AdminPedidoService {
     
     /**
      * Listar todos los pedidos como DTO (con datos del cliente)
+     * Excluye pedidos cancelados para mantener el listado limpio
      */
     @Transactional(readOnly = true)
     public List<PedidoResponseDTO> listarTodosDTO() {
-        return pedidoRepository.findAllByOrderByFechaPedidoDesc().stream()
+        return pedidoRepository.findAllExceptCancelledOrderByFechaPedidoDesc().stream()
                 .map(PedidoResponseDTO::fromPedido)
                 .collect(Collectors.toList());
     }
@@ -108,6 +109,7 @@ public class AdminPedidoService {
     
     /**
      * Buscar pedidos por información del cliente como DTO
+     * Excluye pedidos cancelados
      */
     @Transactional(readOnly = true)
     public List<PedidoResponseDTO> buscarPorClienteDTO(String busqueda) {
@@ -115,6 +117,7 @@ public class AdminPedidoService {
             return listarTodosDTO();
         }
         return pedidoRepository.buscarPedidosPorCliente(busqueda.trim()).stream()
+                .filter(p -> !"CANCELADO".equals(p.getEstado()))
                 .map(PedidoResponseDTO::fromPedido)
                 .collect(Collectors.toList());
     }
@@ -185,9 +188,9 @@ public class AdminPedidoService {
     }
     
     /**
-     * Cambiar estado de pedido a CANCELADO
+     * Cambiar estado de pedido a CANCELADO con motivo
      */
-    public Pedido cancelarPedido(Long id) {
+    public Pedido cancelarPedido(Long id, String motivo) {
         Pedido pedido = pedidoRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Pedido no encontrado"));
         
@@ -197,6 +200,7 @@ public class AdminPedidoService {
         }
         
         pedido.setEstado("CANCELADO");
+        pedido.setMotivoCancelacion(motivo);
         return pedidoRepository.save(pedido);
     }
     
@@ -265,6 +269,28 @@ public class AdminPedidoService {
             .reduce(BigDecimal.ZERO, BigDecimal::add);
         
         return new ResumenPedidosHoy(totalPedidos, pendientes, completados, totalVentas);
+    }
+    
+    /**
+     * Verificar el pago de un pedido (Yape/Plin)
+     * El administrador confirma que el pago fue recibido
+     */
+    public Pedido verificarPago(Long id) {
+        Pedido pedido = pedidoRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Pedido no encontrado"));
+        
+        // Verificar que sea un pago Yape/Plin
+        if (!"Yape/Plin".equals(pedido.getMetodoPago())) {
+            throw new IllegalArgumentException("Este pedido no requiere verificación de pago (es contra entrega)");
+        }
+        
+        // Verificar que tenga comprobante
+        if (pedido.getComprobantePago() == null || pedido.getComprobantePago().isEmpty()) {
+            throw new IllegalArgumentException("El pedido no tiene comprobante de pago adjunto");
+        }
+        
+        pedido.setPagoVerificado(true);
+        return pedidoRepository.save(pedido);
     }
     
     /**

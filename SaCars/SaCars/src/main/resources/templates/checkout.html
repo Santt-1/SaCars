@@ -101,12 +101,55 @@
                         <textarea id="comentarios" name="comentarios"
                             placeholder="Alguna referencia extra o comentario..."></textarea>
                     </div>
+
+                    <!-- Método de Pago -->
+                    <div class="form-grupo">
+                        <label>💳 Método de Pago *</label>
+                        <div class="metodos-pago">
+                            <label class="metodo-pago-option">
+                                <input type="radio" name="metodo-pago" value="Contra Entrega" checked>
+                                <span class="metodo-pago-label">
+                                    <span class="metodo-icono">💵</span>
+                                    <span class="metodo-texto">
+                                        <strong>Contra Entrega</strong>
+                                        <small>Paga cuando recibas tu pedido</small>
+                                    </span>
+                                </span>
+                            </label>
+                            <label class="metodo-pago-option">
+                                <input type="radio" name="metodo-pago" value="Yape/Plin">
+                                <span class="metodo-pago-label">
+                                    <span class="metodo-icono">📱</span>
+                                    <span class="metodo-texto">
+                                        <strong>Yape / Plin</strong>
+                                        <small>Pago inmediato con app</small>
+                                    </span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Datos de Yape/Plin (solo visible cuando se selecciona) -->
+                    <div id="seccion-yape-plin" class="form-grupo" style="display: none;">
+                        <div class="yape-plin-info">
+                            <h4>📲 Datos para transferencia:</h4>
+                            <p><strong>Número:</strong> 918 341 898</p>
+                            <p><strong>Nombre:</strong> SaCars Hot Wheels</p>
+                            <p class="yape-plin-nota">⚠️ Sube la captura del pago para confirmar tu pedido</p>
+                        </div>
+                        <label for="comprobante-pago">Captura del comprobante *</label>
+                        <input type="file" id="comprobante-pago" name="comprobante-pago" accept="image/*">
+                        <div id="preview-comprobante" style="margin-top: 10px; display: none;">
+                            <img id="img-preview" src="" alt="Preview" style="max-width: 200px; border-radius: 8px; border: 2px solid #f0c040;">
+                        </div>
+                    </div>
+
                     <div class="checkout-acciones">
                         <button type="button" id="btn-cambiar-zona" class="boton-amarillo btn-outline">
                             🔄 Cambiar Zona de Envío
                         </button>
                         <button type="submit" class="boton-amarillo btn-lleno">
-                            💬 Enviar Pedido por WhatsApp
+                            ✅ Finalizar Compra
                         </button>
                     </div>
                 </form>

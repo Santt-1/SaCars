@@ -34,6 +34,10 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     // Obtener todos los pedidos ordenados por fecha descendente
     List<Pedido> findAllByOrderByFechaPedidoDesc();
     
+    // Obtener todos los pedidos excepto los cancelados (para el listado principal del admin)
+    @Query("SELECT p FROM Pedido p WHERE p.estado <> 'CANCELADO' ORDER BY p.fechaPedido DESC")
+    List<Pedido> findAllExceptCancelledOrderByFechaPedidoDesc();
+    
     // Calcular total de ventas por período
     @Query("SELECT COALESCE(SUM(p.total), 0) FROM Pedido p " +
            "WHERE p.estado = 'COMPLETADO' " +

@@ -24,6 +24,9 @@ $(document).ready(function () {
         e.preventDefault();
         console.log("Interceptado login");
 
+        // Limpiar errores anteriores
+        $("#login-error").text("").removeClass('show');
+
         const email = $("#login-email").val();
         const password = $("#login-password").val();
 
@@ -45,26 +48,22 @@ $(document).ready(function () {
                     console.log("Usuario:", u);
                     console.log("Rol del usuario:", u.rol);
                     
-                    // VALIDACIÓN: Si es administrador, redirigir al login admin
+                    // VALIDACIÓN: Si es administrador, BLOQUEAR acceso desde login cliente
                     if (u.rol === 'administrador') {
-                        console.log("⚠️ Usuario administrador detectado");
+                        console.log("⚠️ Usuario administrador detectado - Acceso bloqueado");
                         $("#login-error").html(
-                            '<span style="color: #ffc107;">Detectamos que eres administrador. ' +
-                            'Por favor usa el <a href="/admin/login" style="color: #ffc107; font-weight: bold; text-decoration: underline;">Panel Admin</a></span>'
-                        );
+                            '<span style="color: #e74c3c;">⛔ Acceso denegado. Los administradores deben usar el ' +
+                            '<a href="/admin/login" style="color: #ffc107; font-weight: bold; text-decoration: underline;">Panel Admin</a></span>'
+                        ).addClass('show');
                         
-                        // Redirigir automáticamente después de 2 segundos
-                        setTimeout(function() {
-                            window.location.href = "/admin/login";
-                        }, 2000);
-                        
-                        return; // No continuar con el login normal
+                        // NO redirigir, solo mostrar mensaje
+                        return;
                     }
 
                     // Solo continuar si es cliente
-                    localStorage.setItem("token", response.data.token);
+                    localStorage.setItem("cliente_token", response.data.token);
 
-                    localStorage.setItem("usuario", JSON.stringify({
+                    localStorage.setItem("cliente_usuario", JSON.stringify({
                         id: u.idUsuario,
                         nombre: u.nombre,
                         apellido: u.apellido,
@@ -81,7 +80,7 @@ $(document).ready(function () {
                     window.location.href = "/";
 
                 } else {
-                    $("#login-error").text(response.message);
+                    $("#login-error").text(response.message).addClass('show');
                 }
             },
 
@@ -94,7 +93,7 @@ $(document).ready(function () {
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     mensaje = xhr.responseJSON.message;
                 }
-                $("#login-error").text(mensaje);
+                $("#login-error").text(mensaje).addClass('show');
             },
         });
     });

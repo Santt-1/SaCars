@@ -39,7 +39,16 @@ public class Pedido {
     private BigDecimal total;
 
     @Column(name = "metodo_pago", nullable = false)
-    private String metodoPago; // ej: Yape, Plin, Efectivo
+    private String metodoPago; // ej: Yape/Plin, Contra Entrega
+
+    @Column(name = "comprobante_pago")
+    private String comprobantePago; // Ruta de imagen del comprobante (para Yape/Plin)
+
+    @Column(name = "pago_verificado")
+    private Boolean pagoVerificado = false; // Si el admin verificó el pago
+
+    @Column(name = "motivo_cancelacion", length = 500)
+    private String motivoCancelacion; // Razón de cancelación del pedido
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -112,6 +121,31 @@ public class Pedido {
     public void setMetodoPago(String metodoPago) {
         this.metodoPago = metodoPago;
     }
+
+    public String getComprobantePago() {
+        return comprobantePago;
+    }
+
+    public void setComprobantePago(String comprobantePago) {
+        this.comprobantePago = comprobantePago;
+    }
+
+    public Boolean getPagoVerificado() {
+        return pagoVerificado;
+    }
+
+    public void setPagoVerificado(Boolean pagoVerificado) {
+        this.pagoVerificado = pagoVerificado;
+    }
+
+    public String getMotivoCancelacion() {
+        return motivoCancelacion;
+    }
+
+    public void setMotivoCancelacion(String motivoCancelacion) {
+        this.motivoCancelacion = motivoCancelacion;
+    }
+
     public List<DetallePedido> getDetalles() {
         return detalles;
     }

@@ -39,11 +39,18 @@ $(document).ready(function() {
             marcarComoCompletado(pedidoIdActual);
         }
     });
+
+    // Cancelar pedido desde el modal
+    $('#btnCancelarPedido').on('click', function() {
+        if (pedidoIdActual) {
+            cancelarPedido(pedidoIdActual);
+        }
+    });
 });
 
 // Verificar autenticación
 function verificarAutenticacionAdmin() {
-    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    const usuario = JSON.parse(localStorage.getItem('admin_usuario') || '{}');
     
     if (!usuario.correo || usuario.rol !== 'administrador') {
         window.location.href = '/admin/login';
@@ -194,7 +201,8 @@ function mostrarPedidos(pedidos) {
                         👁️
                     </button>
                     ${estadoUpper === 'PENDIENTE' 
-                        ? `<button class="btn-action btn-complete" onclick="marcarComoCompletado(${pedido.idPedido})" title="Completar">✅</button>`
+                        ? `<button class="btn-action btn-complete" onclick="marcarComoCompletado(${pedido.idPedido})" title="Completar">✅</button>
+                           <button class="btn-action btn-cancel" onclick="cancelarPedido(${pedido.idPedido})" title="Cancelar" style="background: #e74c3c;">❌</button>`
                         : ''
                     }
                 </td>
@@ -219,7 +227,7 @@ function verDetallePedido(idPedido) {
             $('#clienteNombre').text(pedido.nombreCliente || 'N/A');
             $('#clienteEmail').text(pedido.emailCliente || 'N/A');
             $('#clienteTelefono').text(pedido.telefonoCliente || 'N/A');
-            $('#clienteDireccion').text(pedido.direccionCliente || 'N/A');
+            $('#clienteDireccion').text(pedido.direccionEnvio || 'N/A');
 
             // Información del pedido
             const fecha = new Date(pedido.fechaPedido);
@@ -298,11 +306,38 @@ function verDetallePedido(idPedido) {
                 productosBody.append('<tr><td colspan="4" style="padding: 20px; text-align: center; color: #999;">No hay productos en este pedido</td></tr>');
             }
 
-            // Mostrar/ocultar botón de completar
+            // Mostrar/ocultar botones según estado
             if (estadoUpper === 'PENDIENTE') {
                 $('#btnMarcarCompletado').show();
+                $('#btnCancelarPedido').show();
             } else {
                 $('#btnMarcarCompletado').hide();
+                $('#btnCancelarPedido').hide();
+            }
+
+            // Mostrar sección de comprobante si es Yape/Plin
+            if (pedido.metodoPago === 'Yape/Plin') {
+                $('#seccionComprobante').show();
+                
+                if (pedido.comprobantePago) {
+                    $('#imgComprobante').attr('src', pedido.comprobantePago);
+                    $('#imgComprobanteContainer').show();
+                } else {
+                    $('#imgComprobanteContainer').hide();
+                }
+                
+                // Mostrar estado de verificación
+                if (pedido.pagoVerificado) {
+                    $('#badgePagoVerificado').show();
+                    $('#badgePagoPendiente').hide();
+                    $('#btnVerificarPago').hide();
+                } else {
+                    $('#badgePagoVerificado').hide();
+                    $('#badgePagoPendiente').show();
+                    $('#btnVerificarPago').show();
+                }
+            } else {
+                $('#seccionComprobante').hide();
             }
 
             $('#modalDetallePedido').fadeIn();
@@ -327,6 +362,48 @@ function marcarComoCompletado(idPedido) {
         },
         error: function() {
             mostrarMensaje('Error al completar el pedido', 'error');
+        }
+    });
+}
+
+// Cancelar pedido - mostrar modal para ingresar motivo
+function cancelarPedido(idPedido) {
+    $('#pedidoACancelar').val(idPedido);
+    $('#motivoCancelacion').val('');
+    $('#modalCancelacion').fadeIn(200);
+}
+
+// Cerrar modal de cancelación
+function cerrarModalCancelacion() {
+    $('#modalCancelacion').fadeOut(200);
+    $('#pedidoACancelar').val('');
+    $('#motivoCancelacion').val('');
+}
+
+// Confirmar cancelación con motivo
+function confirmarCancelacion() {
+    const idPedido = $('#pedidoACancelar').val();
+    const motivo = $('#motivoCancelacion').val().trim();
+    
+    if (!motivo) {
+        alert('Debes ingresar un motivo para cancelar el pedido');
+        return;
+    }
+    
+    $.ajax({
+        url: `/admin/pedidos/api/cancelar/${idPedido}`,
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify({ motivo: motivo }),
+        success: function() {
+            mostrarMensaje('Pedido cancelado correctamente', 'success');
+            cerrarModalCancelacion();
+            cerrarModal();
+            aplicarFiltros();
+        },
+        error: function(xhr) {
+            const msg = xhr.responseJSON?.error || 'Error al cancelar el pedido';
+            mostrarMensaje(msg, 'error');
         }
     });
 }
@@ -388,6 +465,61 @@ function mostrarMensaje(mensaje, tipo) {
         });
     }, 3000);
 }
+
+// Verificar pago de pedido Yape/Plin
+function verificarPago() {
+    if (!pedidoIdActual) return;
+    
+    if (!confirm('¿Confirmas que el pago ha sido verificado correctamente?')) return;
+    
+    $.ajax({
+        url: `/admin/pedidos/api/verificar-pago/${pedidoIdActual}`,
+        method: 'PUT',
+        success: function(response) {
+            mostrarMensaje('Pago verificado correctamente', 'success');
+            // Actualizar UI
+            $('#badgePagoVerificado').show();
+            $('#badgePagoPendiente').hide();
+            $('#btnVerificarPago').hide();
+        },
+        error: function(xhr) {
+            const error = xhr.responseJSON?.error || 'Error al verificar el pago';
+            mostrarMensaje(error, 'error');
+        }
+    });
+}
+
+// Ampliar imagen del comprobante
+function ampliarComprobante() {
+    const imgSrc = $('#imgComprobante').attr('src');
+    if (!imgSrc) return;
+    
+    const modal = $(`
+        <div id="modalAmpliarImg" style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            cursor: pointer;
+        " onclick="this.remove()">
+            <img src="${imgSrc}" style="max-width: 90%; max-height: 90%; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+            <span style="position: absolute; top: 20px; right: 30px; color: white; font-size: 30px; cursor: pointer;">&times;</span>
+        </div>
+    `);
+    
+    $('body').append(modal);
+}
+
+// Event listener para botón de verificar pago
+$(document).ready(function() {
+    $('#btnVerificarPago').on('click', verificarPago);
+});
 
 // Estilos adicionales
 const style = document.createElement('style');

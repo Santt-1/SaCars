@@ -180,7 +180,9 @@ CREATE TABLE `pedidos` (
   `ciudad_envio` varchar(100) NOT NULL,
   `codigo_postal` varchar(20) NOT NULL,
   `total` decimal(38,2) NOT NULL,
-  `metodo_pago` varchar(255) NOT NULL
+  `metodo_pago` varchar(255) NOT NULL,
+  `comprobante_pago` varchar(500) DEFAULT NULL,
+  `pago_verificado` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
